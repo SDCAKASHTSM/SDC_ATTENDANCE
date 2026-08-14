@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, redirect, send_file
-import sqlite3
 from openpyxl import load_workbook, Workbook
 from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
 from reportlab.lib import colors
@@ -37,39 +36,65 @@ OT_MULTIPLIER = 2.0
 
 
 # =========================================================
-# DATABASE
+# DATABASE - POSTGRESQL
 # =========================================================
 
-def get_db():
-    conn = sqlite3.connect(DATABASE)
-    conn.row_factory = sqlite3.Row
-    return conn
+import psycopg2
+from psycopg2.extras import DictCursor
 
 
-def add_column_if_missing(
-    conn,
-    table_name,
-    column_name,
-    definition
-):
+DATABASE_URL = os.environ.get("DATABASE_URL")
 
-    columns = conn.execute(
-        f"PRAGMA table_info({table_name})"
-    ).fetchall()
 
-    names = [
-        column["name"]
-        for column in columns
-    ]
+class PostgresConnection:
+    """
+    Compatibility wrapper so the existing app can keep using:
+        conn.execute("... ?", params)
+        .fetchone()
+        .fetchall()
+        conn.commit()
+        conn.rollback()
+        conn.close()
 
-    if column_name not in names:
+    SQLite-style '?' placeholders are automatically converted
+    to PostgreSQL '%s' placeholders.
+    """
 
-        conn.execute(
-            f"""
-            ALTER TABLE {table_name}
-            ADD COLUMN {column_name} {definition}
-            """
+    def __init__(self, url):
+        if not url:
+            raise RuntimeError(
+                "DATABASE_URL environment variable is not set."
+            )
+
+        self.conn = psycopg2.connect(
+            url,
+            cursor_factory=DictCursor
         )
+
+    def execute(self, query, params=None):
+        query = query.replace("?", "%s")
+
+        cur = self.conn.cursor()
+
+        if params is None:
+            cur.execute(query)
+        else:
+            cur.execute(query, params)
+
+        return cur
+
+    def commit(self):
+        self.conn.commit()
+
+    def rollback(self):
+        self.conn.rollback()
+
+    def close(self):
+        self.conn.close()
+
+
+def get_db():
+    return PostgresConnection(DATABASE_URL)
 
 
 def init_db():
@@ -77,129 +102,126 @@ def init_db():
     conn = get_db()
 
     # -----------------------------------------------------
-    # EMPLOYEES
+    # Existing migrated tables are kept intact.
+    # These CREATE statements are only for a fresh database.
     # -----------------------------------------------------
 
     conn.execute("""
         CREATE TABLE IF NOT EXISTS employees (
-
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-
+            id BIGINT PRIMARY KEY,
             name TEXT NOT NULL,
-
-            employee_code TEXT NOT NULL UNIQUE,
-
+            employee_code TEXT NOT NULL,
             designation TEXT NOT NULL,
-
-            skill TEXT NOT NULL DEFAULT '',
-
             site TEXT NOT NULL,
-
-            basic REAL DEFAULT 0,
-
-            gross REAL DEFAULT 0
-
+            skill TEXT NOT NULL DEFAULT '',
+            gross_salary DOUBLE PRECISION NOT NULL DEFAULT 0,
+            basic_rate_day DOUBLE PRECISION NOT NULL DEFAULT 0,
+            gross DOUBLE PRECISION NOT NULL DEFAULT 0,
+            basic DOUBLE PRECISION NOT NULL DEFAULT 0
         )
     """)
-
-    # -----------------------------------------------------
-    # ATTENDANCE
-    # -----------------------------------------------------
 
     conn.execute("""
         CREATE TABLE IF NOT EXISTS attendance (
-
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-            employee_id INTEGER NOT NULL,
-
+            id BIGINT PRIMARY KEY,
+            employee_id BIGINT NOT NULL,
             attendance_date TEXT NOT NULL,
-
             status TEXT NOT NULL,
-
-            ot_hours REAL DEFAULT 0,
-
-            UNIQUE(
-                employee_id,
-                attendance_date
-            )
-
+            ot_hours DOUBLE PRECISION DEFAULT 0
         )
     """)
-
-    # -----------------------------------------------------
-    # SKILL RATES
-    # -----------------------------------------------------
 
     conn.execute("""
         CREATE TABLE IF NOT EXISTS skill_rates (
-
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-            skill TEXT NOT NULL UNIQUE,
-
-            rate REAL DEFAULT 0
-
+            id BIGINT PRIMARY KEY,
+            skill_name TEXT NOT NULL DEFAULT '',
+            rate DOUBLE PRECISION NOT NULL DEFAULT 0,
+            skill TEXT NOT NULL DEFAULT ''
         )
     """)
-
-    # -----------------------------------------------------
-    # SALARY DEDUCTIONS
-    # -----------------------------------------------------
 
     conn.execute("""
         CREATE TABLE IF NOT EXISTS salary_deductions (
-
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-            employee_id INTEGER NOT NULL,
-
+            id BIGINT PRIMARY KEY,
+            employee_id BIGINT NOT NULL,
             month INTEGER NOT NULL,
-
             year INTEGER NOT NULL,
-
-            profession_tax REAL DEFAULT 0,
-
-            advance_deduction REAL DEFAULT 0,
-
-            other_deduction REAL DEFAULT 0,
-
-            UNIQUE(
-                employee_id,
-                month,
-                year
-            )
-
+            profession_tax DOUBLE PRECISION DEFAULT 0,
+            advance_deduction DOUBLE PRECISION DEFAULT 0,
+            other_deduction DOUBLE PRECISION DEFAULT 0
         )
     """)
 
     # -----------------------------------------------------
-    # OLD DATABASE COMPATIBILITY
+    # UNIQUE RULES
     # -----------------------------------------------------
 
-    add_column_if_missing(
-        conn,
-        "employees",
-        "skill",
-        "TEXT NOT NULL DEFAULT ''"
-    )
+    conn.execute("""
+        CREATE UNIQUE INDEX IF NOT EXISTS
+        employees_employee_code_unique
+        ON employees(employee_code)
+    """)
 
-    add_column_if_missing(
-        conn,
-        "employees",
-        "basic",
-        "REAL DEFAULT 0"
-    )
+    conn.execute("""
+        CREATE UNIQUE INDEX IF NOT EXISTS
+        attendance_employee_date_unique
+        ON attendance(employee_id, attendance_date)
+    """)
 
-    add_column_if_missing(
-        conn,
+    conn.execute("""
+        CREATE UNIQUE INDEX IF NOT EXISTS
+        salary_deductions_employee_month_year_unique
+        ON salary_deductions(employee_id, month, year)
+    """)
+
+    conn.execute("""
+        CREATE UNIQUE INDEX IF NOT EXISTS
+        skill_rates_skill_unique
+        ON skill_rates(skill)
+    """)
+
+    # -----------------------------------------------------
+    # ID SEQUENCES
+    #
+    # The migration preserved the original SQLite IDs.
+    # These sequences are now used for NEW records.
+    # -----------------------------------------------------
+
+    for table in [
         "employees",
-        "gross",
-        "REAL DEFAULT 0"
-    )
+        "attendance",
+        "skill_rates",
+        "salary_deductions"
+    ]:
+
+        sequence = f"{table}_id_seq"
+
+        conn.execute(
+            f"CREATE SEQUENCE IF NOT EXISTS {sequence}"
+        )
+
+        conn.execute(
+            f"""
+            SELECT setval(
+                '{sequence}',
+                COALESCE(
+                    (SELECT MAX(id) FROM {table}),
+                    0
+                ) + 1,
+                false
+            )
+            """
+        )
+
+        conn.execute(
+            f"""
+            ALTER TABLE {table}
+            ALTER COLUMN id
+            SET DEFAULT nextval('{sequence}')
+            """
+        )
 
     conn.commit()
-
     conn.close()
 
 
@@ -1350,7 +1372,7 @@ def add_employee():
 
         conn.commit()
 
-    except sqlite3.IntegrityError:
+    except psycopg2.IntegrityError:
 
         conn.close()
 
@@ -1493,7 +1515,7 @@ def update_employee(employee_id):
 
         conn.commit()
 
-    except sqlite3.IntegrityError:
+    except psycopg2.IntegrityError:
 
         conn.close()
 
