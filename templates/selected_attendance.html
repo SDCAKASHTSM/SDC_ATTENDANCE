@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Daily Attendance - SDC</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+
+    margin: 0;
+
+    min-height: 100vh;
+
+    background: #07111f;
+
+    color: white;
+
+    font-family: Arial, sans-serif;
+
+    padding: 30px;
+}
+
+.container {
+
+    width: 100%;
+
+    max-width: 1300px;
+
+    margin: auto;
+}
+
+/* HEADER */
+
+.header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 25px;
+}
+
+.title {
+
+    font-size: 30px;
+
+    font-weight: bold;
+}
+
+.info {
+
+    margin-top: 8px;
+
+    color: #7dd3a8;
+
+    font-weight: bold;
+}
+
+.home {
+
+    text-decoration: none;
+
+    background: #1769aa;
+
+    color: white;
+
+    padding: 11px 20px;
+
+    border-radius: 8px;
+
+    font-weight: bold;
+}
+
+.home:hover {
+
+    background: #2185d0;
+}
+
+/* CARD */
+
+.card {
+
+    background: #0d1b2d;
+
+    border: 1px solid #263a52;
+
+    border-radius: 16px;
+
+    padding: 22px;
+
+    margin-bottom: 20px;
+}
+
+/* BULK BUTTONS */
+
+.bulk-title {
+
+    font-size: 18px;
+
+    font-weight: bold;
+
+    margin-bottom: 15px;
+}
+
+.bulk-buttons {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+}
+
+.bulk-button {
+
+    border: none;
+
+    padding: 11px 18px;
+
+    border-radius: 8px;
+
+    color: white;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+.present-all {
+
+    background: #236b45;
+}
+
+.present-all:hover {
+
+    background: #2d8556;
+}
+
+.absent-all {
+
+    background: #8b3030;
+}
+
+.absent-all:hover {
+
+    background: #a83a3a;
+}
+
+.wo-all {
+
+    background: #795b20;
+}
+
+.wo-all:hover {
+
+    background: #967229;
+}
+
+.nh-all {
+
+    background: #345d88;
+}
+
+.nh-all:hover {
+
+    background: #4273a8;
+}
+
+.fl-all {
+
+    background: #664080;
+}
+
+.fl-all:hover {
+
+    background: #7d4e9b;
+}
+
+/* TABLE */
+
+.table-wrapper {
+
+    width: 100%;
+
+    overflow-x: auto;
+}
+
+table {
+
+    width: 100%;
+
+    border-collapse: collapse;
+
+    min-width: 850px;
+}
+
+th,
+td {
+
+    padding: 14px;
+
+    border-bottom: 1px solid #263a52;
+
+    text-align: left;
+}
+
+th {
+
+    color: #8fa4bb;
+
+    font-size: 13px;
+
+    text-transform: uppercase;
+}
+
+tr:hover {
+
+    background: #12263d;
+}
+
+/* STATUS */
+
+.status-select {
+
+    background: #07111f;
+
+    color: white;
+
+    border: 1px solid #263a52;
+
+    border-radius: 7px;
+
+    padding: 9px 12px;
+
+    min-width: 110px;
+
+    cursor: pointer;
+}
+
+.status-select:focus {
+
+    border-color: #4da3ff;
+
+    outline: none;
+}
+
+/* SAVE */
+
+.bottom-bar {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-top: 22px;
+
+    gap: 15px;
+}
+
+.employee-count {
+
+    color: #8296ad;
+
+    font-size: 14px;
+}
+
+.save-button {
+
+    background: #1769aa;
+
+    color: white;
+
+    border: none;
+
+    padding: 14px 28px;
+
+    border-radius: 8px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    font-size: 15px;
+}
+
+.save-button:hover {
+
+    background: #2185d0;
+}
+
+.empty {
+
+    text-align: center;
+
+    padding: 50px;
+
+    color: #71859b;
+}
+
+@media(max-width: 700px) {
+
+    body {
+
+        padding: 18px;
+    }
+
+    .header {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 15px;
+    }
+
+    .bottom-bar {
+
+        flex-direction: column;
+
+        align-items: stretch;
+    }
+
+    .save-button {
+
+        width: 100%;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+<!-- HEADER -->
+
+<div class="header">
+
+
+<div>
+
+<div class="title">
+
+DAILY ATTENDANCE
+
+</div>
+
+
+<div class="info">
+
+{{ site }}
+
+&nbsp; | &nbsp;
+
+{{ selected_date }}
+
+</div>
+
+
+</div>
+
+
+<a
+href="/"
+class="home">
+
+HOME
+
+</a>
+
+
+</div>
+
+
+
+<!-- BULK ACTIONS -->
+
+<div class="card">
+
+
+<div class="bulk-title">
+
+MARK SELECTED EMPLOYEES
+
+</div>
+
+
+<div class="bulk-buttons">
+
+
+<button
+type="button"
+class="bulk-button present-all"
+onclick="setAllStatus('P')">
+
+PRESENT ALL
+
+</button>
+
+
+<button
+type="button"
+class="bulk-button absent-all"
+onclick="setAllStatus('A')">
+
+ABSENT ALL
+
+</button>
+
+
+<button
+type="button"
+class="bulk-button wo-all"
+onclick="setAllStatus('W/O')">
+
+W/O ALL
+
+</button>
+
+
+<button
+type="button"
+class="bulk-button nh-all"
+onclick="setAllStatus('NH')">
+
+NH ALL
+
+</button>
+
+
+<button
+type="button"
+class="bulk-button fl-all"
+onclick="setAllStatus('FL')">
+
+FL ALL
+
+</button>
+
+
+</div>
+
+
+</div>
+
+
+
+<!-- ATTENDANCE FORM -->
+
+<div class="card">
+
+
+<form
+method="POST"
+action="/save-selected-attendance"
+>
+
+
+<input
+type="hidden"
+name="site"
+value="{{ site }}"
+>
+
+
+<input
+type="hidden"
+name="month"
+value="{{ month }}"
+>
+
+
+<input
+type="hidden"
+name="year"
+value="{{ year }}"
+>
+
+
+<input
+type="hidden"
+name="selected_date"
+value="{{ selected_date }}"
+>
+
+
+<div class="table-wrapper">
+
+
+<table>
+
+
+<thead>
+
+<tr>
+
+<th>#</th>
+
+<th>Employee Name</th>
+
+<th>Employee Code</th>
+
+<th>Designation</th>
+
+<th>Skill</th>
+
+<th>Attendance</th>
+
+</tr>
+
+</thead>
+
+
+<tbody>
+
+
+{% if employees %}
+
+
+{% for employee in employees %}
+
+
+<tr>
+
+
+<td>
+
+{{ loop.index }}
+
+</td>
+
+
+<td>
+
+<strong>
+
+{{ employee["name"] }}
+
+</strong>
+
+</td>
+
+
+<td>
+
+{{ employee["employee_code"] }}
+
+</td>
+
+
+<td>
+
+{{ employee["designation"] }}
+
+</td>
+
+
+<td>
+
+{{ employee["skill"] }}
+
+</td>
+
+
+<td>
+
+
+<input
+type="hidden"
+name="employee_ids"
+value="{{ employee['id'] }}"
+>
+
+
+<select
+class="status-select"
+name="status_{{ employee['id'] }}"
+>
+
+
+<option value="">
+
+SELECT
+
+</option>
+
+
+<option value="P">
+
+P — PRESENT
+
+</option>
+
+
+<option value="A">
+
+A — ABSENT
+
+</option>
+
+
+<option value="W/O">
+
+W/O — WEEK OFF
+
+</option>
+
+
+<option value="NH">
+
+NH — NATIONAL HOLIDAY
+
+</option>
+
+
+<option value="FL">
+
+FL — FULL LEAVE
+
+</option>
+
+
+</select>
+
+
+</td>
+
+
+</tr>
+
+
+{% endfor %}
+
+
+{% else %}
+
+
+<tr>
+
+<td
+colspan="6"
+class="empty">
+
+No employees selected.
+
+</td>
+
+</tr>
+
+
+{% endif %}
+
+
+</tbody>
+
+
+</table>
+
+
+</div>
+
+
+
+<div class="bottom-bar">
+
+
+<div class="employee-count">
+
+{{ employees|length }} employees selected
+
+</div>
+
+
+<button
+type="submit"
+class="save-button">
+
+SAVE ATTENDANCE
+
+</button>
+
+
+</div>
+
+
+</form>
+
+
+</div>
+
+
+</div>
+
+
+
+<script>
+
+
+function setAllStatus(status) {
+
+    const selects =
+        document.querySelectorAll(
+            ".status-select"
+        );
+
+    selects.forEach(function(select) {
+
+        select.value = status;
+
+    });
+
+}
+
+
+</script>
+
+
+</body>
+
+</html>

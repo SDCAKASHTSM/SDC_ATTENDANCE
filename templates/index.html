@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SDC Attendance Management System</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+
+    min-height: 100vh;
+
+    background: #07111f;
+
+    color: white;
+
+    font-family: Arial, sans-serif;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    padding: 30px;
+}
+
+.container {
+
+    width: 100%;
+
+    max-width: 1100px;
+
+    text-align: center;
+}
+
+.logo {
+
+    font-size: 58px;
+
+    margin-bottom: 15px;
+}
+
+h1 {
+
+    font-size: 38px;
+
+    letter-spacing: 2px;
+
+    margin-bottom: 10px;
+}
+
+.subtitle {
+
+    color: #9fb0c5;
+
+    font-size: 16px;
+
+    margin-bottom: 55px;
+}
+
+/* =====================================================
+   MAIN BUTTONS
+===================================================== */
+
+.buttons {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 25px;
+}
+
+.menu-button {
+
+    width: 100%;
+
+    min-height: 210px;
+
+    border: 1px solid #263a52;
+
+    border-radius: 18px;
+
+    background: #0d1b2d;
+
+    color: white;
+
+    cursor: pointer;
+
+    transition: 0.25s;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    text-decoration: none;
+}
+
+.menu-button:hover {
+
+    transform: translateY(-7px);
+
+    border-color: #4da3ff;
+
+    background: #12263d;
+
+    box-shadow:
+        0 10px 30px
+        rgba(0, 0, 0, 0.25);
+}
+
+.icon {
+
+    font-size: 48px;
+
+    margin-bottom: 18px;
+}
+
+.button-title {
+
+    font-size: 21px;
+
+    font-weight: bold;
+
+    letter-spacing: 0.5px;
+}
+
+.button-description {
+
+    color: #8fa4bb;
+
+    margin-top: 10px;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+
+    max-width: 220px;
+}
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+.footer {
+
+    margin-top: 60px;
+
+    color: #64778d;
+
+    font-size: 13px;
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media(max-width: 850px) {
+
+    .buttons {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .menu-button {
+
+        min-height: 160px;
+
+    }
+
+    h1 {
+
+        font-size: 29px;
+
+    }
+
+    .subtitle {
+
+        margin-bottom: 35px;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<div class="logo">
+🏢
+</div>
+
+
+<h1>
+SDC ATTENDANCE MANAGEMENT SYSTEM
+</h1>
+
+
+<div class="subtitle">
+Employee Attendance, Overtime &amp; Master Data Management
+</div>
+
+
+<!-- =====================================================
+     MAIN MENU
+===================================================== -->
+
+<div class="buttons">
+
+
+<!-- FILL ATTENDANCE -->
+
+<a
+    href="/fill-attendance"
+    class="menu-button"
+>
+
+<div class="icon">
+📋
+</div>
+
+<div class="button-title">
+FILL ATTENDANCE
+</div>
+
+<div class="button-description">
+Enter employee attendance &amp; overtime
+</div>
+
+</a>
+
+
+<!-- SHOW ATTENDANCE -->
+
+<a
+    href="/show-attendance"
+    class="menu-button"
+>
+
+<div class="icon">
+📊
+</div>
+
+<div class="button-title">
+SHOW ATTENDANCE
+</div>
+
+<div class="button-description">
+View monthly attendance &amp; salary data
+</div>
+
+</a>
+
+
+<!-- MANAGE EMPLOYEE -->
+
+<a
+    href="/manage-employees"
+    class="menu-button"
+>
+
+<div class="icon">
+👥
+</div>
+
+<div class="button-title">
+MANAGE EMPLOYEE
+</div>
+
+<div class="button-description">
+Add, edit, search &amp; import employee master data
+</div>
+
+</a>
+
+
+</div>
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<div class="footer">
+
+SDC Attendance Management System
+
+</div>
+
+
+</div>
+
+
+</body>
+
+</html>

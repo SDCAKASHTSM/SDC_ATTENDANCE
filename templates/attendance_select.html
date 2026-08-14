@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Select Employees - SDC Attendance</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: #07111f;
+    color: white;
+    font-family: Arial, sans-serif;
+    padding: 30px;
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: auto;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.title {
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.info {
+    margin-top: 8px;
+    color: #7dd3a8;
+    font-weight: bold;
+}
+
+.home {
+    text-decoration: none;
+    background: #1769aa;
+    color: white;
+    padding: 11px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.home:hover {
+    background: #2185d0;
+}
+
+.card {
+    background: #0d1b2d;
+    border: 1px solid #263a52;
+    border-radius: 16px;
+    padding: 22px;
+    margin-bottom: 20px;
+}
+
+
+/* SEARCH */
+
+.search {
+    width: 100%;
+    padding: 14px;
+    background: #07111f;
+    color: white;
+    border: 1px solid #263a52;
+    border-radius: 8px;
+    outline: none;
+    font-size: 15px;
+    margin-bottom: 15px;
+}
+
+.search:focus {
+    border-color: #4da3ff;
+}
+
+
+/* TOOLBAR */
+
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.toolbar-left {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.toolbar-right {
+    color: #7dd3a8;
+    font-weight: bold;
+}
+
+.tool-button {
+    border: none;
+    color: white;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.select-all-button {
+    background: #39495c;
+}
+
+.select-all-button:hover {
+    background: #4b5e73;
+}
+
+.clear-all-button {
+    background: #633333;
+}
+
+.clear-all-button:hover {
+    background: #824242;
+}
+
+
+/* EMPLOYEE LIST */
+
+.employee-list {
+    max-height: 500px;
+    overflow-y: auto;
+    border: 1px solid #263a52;
+    border-radius: 10px;
+}
+
+.employee {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 15px;
+    border-bottom: 1px solid #263a52;
+    cursor: pointer;
+}
+
+.employee:last-child {
+    border-bottom: none;
+}
+
+.employee:hover {
+    background: #12263d;
+}
+
+.employee input {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.employee-name {
+    font-weight: bold;
+}
+
+.employee-info {
+    color: #8296ad;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+
+/* DONE */
+
+.actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.selected-count {
+    color: #7dd3a8;
+    font-weight: bold;
+}
+
+.done-button {
+    border: none;
+    background: #236b45;
+    color: white;
+    padding: 13px 25px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.done-button:hover {
+    background: #2d8556;
+}
+
+
+/* EMPTY */
+
+.empty {
+    text-align: center;
+    padding: 40px;
+    color: #71859b;
+}
+
+
+/* MOBILE */
+
+@media(max-width: 700px) {
+
+    body {
+        padding: 18px;
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .done-button {
+        width: 100%;
+    }
+
+    .toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .toolbar-left {
+        width: 100%;
+    }
+
+    .tool-button {
+        flex: 1;
+    }
+
+    .toolbar-right {
+        text-align: center;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+<!-- HEADER -->
+
+<div class="header">
+
+<div>
+
+<div class="title">
+
+SELECT EMPLOYEES
+
+</div>
+
+<div class="info">
+
+{{ site }}
+—
+{{ date_name }}
+—
+{{ day_name }}
+
+</div>
+
+</div>
+
+
+<a
+href="/"
+class="home">
+
+HOME
+
+</a>
+
+</div>
+
+
+<!-- EMPLOYEE SELECTION -->
+
+<div class="card">
+
+
+<!-- SEARCH -->
+
+<input
+type="text"
+id="searchBox"
+class="search"
+placeholder="Search employee name, code, designation or skill..."
+onkeyup="filterEmployees()"
+>
+
+
+<!-- TOOLBAR -->
+
+<div class="toolbar">
+
+<div class="toolbar-left">
+
+<button
+type="button"
+class="tool-button select-all-button"
+onclick="selectAllVisible()">
+
+SELECT ALL VISIBLE
+
+</button>
+
+
+<button
+type="button"
+class="tool-button clear-all-button"
+onclick="clearAllSelection()">
+
+CLEAR SELECTION
+
+</button>
+
+</div>
+
+
+<div
+class="toolbar-right"
+id="selectedCount">
+
+0 employees selected
+
+</div>
+
+</div>
+
+
+<!-- FORM -->
+
+<form
+method="POST"
+action="/attendance-register"
+id="employeeForm"
+>
+
+<input
+type="hidden"
+name="site"
+value="{{ site }}"
+>
+
+<input
+type="hidden"
+name="month"
+value="{{ month }}"
+>
+
+<input
+type="hidden"
+name="year"
+value="{{ year }}"
+>
+
+<input
+type="hidden"
+name="day"
+value="{{ day }}"
+>
+
+
+<!-- EMPLOYEE LIST -->
+
+<div
+class="employee-list"
+id="employeeList"
+>
+
+
+{% if employees %}
+
+
+{% for employee in employees %}
+
+
+<label
+class="employee"
+data-search="{{ employee['name'] }} {{ employee['employee_code'] }} {{ employee['designation'] }} {{ employee['skill'] }}"
+>
+
+
+<input
+type="checkbox"
+name="employee_ids"
+value="{{ employee['id'] }}"
+onchange="updateCount()"
+>
+
+
+<div>
+
+<div class="employee-name">
+
+{{ employee["name"] }}
+
+</div>
+
+
+<div class="employee-info">
+
+{{ employee["employee_code"] }}
+
+&nbsp; | &nbsp;
+
+{{ employee["designation"] }}
+
+&nbsp; | &nbsp;
+
+{{ employee["skill"] }}
+
+</div>
+
+</div>
+
+
+</label>
+
+
+{% endfor %}
+
+
+{% else %}
+
+
+<div class="empty">
+
+No employees found for this site.
+
+</div>
+
+
+{% endif %}
+
+
+</div>
+
+
+<!-- DONE -->
+
+<div class="actions">
+
+
+<div
+class="selected-count"
+id="bottomSelectedCount">
+
+0 employees selected
+
+</div>
+
+
+<button
+type="submit"
+class="done-button">
+
+DONE — CONTINUE
+
+</button>
+
+
+</div>
+
+
+</form>
+
+
+</div>
+
+
+</div>
+
+
+<script>
+
+
+function updateCount() {
+
+    const checked =
+        document.querySelectorAll(
+            'input[name="employee_ids"]:checked'
+        ).length;
+
+    document.getElementById(
+        "selectedCount"
+    ).innerText =
+        checked +
+        " employees selected";
+
+    document.getElementById(
+        "bottomSelectedCount"
+    ).innerText =
+        checked +
+        " employees selected";
+}
+
+
+function filterEmployees() {
+
+    const search =
+        document.getElementById(
+            "searchBox"
+        ).value
+        .toLowerCase()
+        .trim();
+
+    const employees =
+        document.querySelectorAll(
+            ".employee"
+        );
+
+    employees.forEach(function(employee) {
+
+        const text =
+            employee.dataset.search.toLowerCase();
+
+        if (text.includes(search)) {
+
+            employee.style.display = "flex";
+
+        } else {
+
+            employee.style.display = "none";
+
+        }
+
+    });
+
+}
+
+
+function selectAllVisible() {
+
+    const employees =
+        document.querySelectorAll(
+            ".employee"
+        );
+
+    employees.forEach(function(employee) {
+
+        if (
+            employee.style.display !== "none"
+        ) {
+
+            const checkbox =
+                employee.querySelector(
+                    'input[type="checkbox"]'
+                );
+
+            checkbox.checked = true;
+
+        }
+
+    });
+
+    updateCount();
+
+}
+
+
+function clearAllSelection() {
+
+    const checkboxes =
+        document.querySelectorAll(
+            'input[name="employee_ids"]'
+        );
+
+    checkboxes.forEach(function(checkbox) {
+
+        checkbox.checked = false;
+
+    });
+
+    updateCount();
+
+}
+
+
+document.getElementById(
+    "employeeForm"
+).addEventListener(
+    "submit",
+    function(event) {
+
+        const checked =
+            document.querySelectorAll(
+                'input[name="employee_ids"]:checked'
+            ).length;
+
+        if (checked === 0) {
+
+            event.preventDefault();
+
+            alert(
+                "Please select at least one employee."
+            );
+
+        }
+
+    }
+);
+
+
+updateCount();
+
+
+</script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>{{ site }} - Attendance Report</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #07111f;
+    color: white;
+    font-family: Arial, sans-serif;
+    padding: 25px;
+}
+
+.container {
+    max-width: 1900px;
+    margin: auto;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    gap: 20px;
+}
+
+h1 {
+    font-size: 30px;
+}
+
+.site {
+    color: #4da3ff;
+    margin-top: 8px;
+    font-weight: bold;
+}
+
+.month {
+    color: #7dd3a8;
+    margin-top: 5px;
+    font-weight: bold;
+}
+
+.buttons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.button,
+.extract-button {
+    text-decoration: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    color: white;
+    background: #39495c;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.button:hover,
+.extract-button:hover {
+    background: #4d5f73;
+}
+
+.extract {
+    position: relative;
+}
+
+.extract-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 45px;
+    background: #12263d;
+    border: 1px solid #34506d;
+    border-radius: 9px;
+    min-width: 150px;
+    overflow: hidden;
+    z-index: 100;
+    box-shadow: 0 8px 25px rgba(0,0,0,.4);
+}
+
+.extract-menu a {
+    display: block;
+    padding: 12px 16px;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.extract-menu a:hover {
+    background: #1d3a58;
+}
+
+.extract:hover .extract-menu {
+    display: block;
+}
+
+.card {
+    background: #0d1b2d;
+    border: 1px solid #263a52;
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+.section-title {
+    margin-bottom: 18px;
+    font-size: 21px;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 2100px;
+}
+
+th,
+td {
+    padding: 10px 9px;
+    border-bottom: 1px solid #263a52;
+    text-align: center;
+    white-space: nowrap;
+}
+
+th {
+    background: #12263d;
+    color: #9fb0c5;
+    font-size: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+td {
+    font-size: 13px;
+}
+
+.employee-info {
+    text-align: left;
+    position: sticky;
+    left: 0;
+    background: #0d1b2d;
+    z-index: 1;
+}
+
+th.employee-info {
+    background: #12263d;
+    z-index: 3;
+}
+
+.attendance {
+    font-weight: bold;
+}
+
+.present {
+    color: #63e6be;
+}
+
+.absent {
+    color: #ff6b6b;
+}
+
+.weekoff {
+    color: #ffd166;
+}
+
+.holiday {
+    color: #74c0fc;
+}
+
+.leave {
+    color: #c77dff;
+}
+
+.money {
+    text-align: right;
+}
+
+.total-row {
+    background: #12263d;
+    font-weight: bold;
+}
+
+.total-row td {
+    border-top: 2px solid #4da3ff;
+}
+
+.deduction-cell {
+    min-width: 125px;
+}
+
+.deduction-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
+
+.deduction-input {
+    width: 105px;
+    padding: 7px;
+    border-radius: 6px;
+    border: 1px solid #45627f;
+    background: #07111f;
+    color: white;
+    text-align: right;
+    font-size: 12px;
+}
+
+.deduction-input:focus {
+    outline: none;
+    border-color: #4da3ff;
+}
+
+.save-small {
+    background: #176b4b;
+    border: none;
+    color: white;
+    padding: 7px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 11px;
+}
+
+.save-small:hover {
+    background: #21885f;
+}
+
+.before-payment {
+    color: #ffd166;
+    font-weight: bold;
+}
+
+.final-payment {
+    color: #63e6be;
+    font-weight: bold;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+}
+
+.summary-box {
+    background: #07111f;
+    border: 1px solid #263a52;
+    border-radius: 10px;
+    padding: 18px;
+}
+
+.summary-title {
+    color: #8fa4bb;
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+.summary-value {
+    font-size: 21px;
+    font-weight: bold;
+}
+
+.note {
+    color: #8fa4bb;
+    font-size: 12px;
+    margin-top: 12px;
+}
+
+@media(max-width: 900px) {
+
+    body {
+        padding: 15px;
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .buttons {
+        flex-wrap: wrap;
+    }
+
+    .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+
+/* =====================================================
+   V1.1.0 - DATE WISE PRESENT + OT
+   ===================================================== */
+
+.date-header {
+    text-align: center;
+    min-width: 90px;
+}
+
+.sub-header {
+    font-size: 10px;
+    white-space: nowrap;
+    text-align: center;
+    padding: 6px 8px;
+}
+
+.sub-header-space {
+    padding: 0;
+}
+
+.ot-cell {
+    font-size: 11px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+
+<!-- ================= HEADER ================= -->
+
+<div class="header">
+
+<div>
+
+<h1>
+📊 SHOW ATTENDANCE REPORT
+</h1>
+
+<div class="site">
+SITE: {{ site }}
+</div>
+
+<div class="month">
+{{ month_name }} {{ year }}
+</div>
+
+</div>
+
+
+<div class="buttons">
+
+
+<!-- EXTRACT -->
+
+<div class="extract">
+
+<button class="extract-button">
+⬇ EXTRACT ▾
+</button>
+
+<div class="extract-menu">
+
+<a href="/export-attendance-pdf/{{ site }}/{{ month }}/{{ year }}">
+📄 PDF
+</a>
+
+<a href="/export-attendance-excel/{{ site }}/{{ month }}/{{ year }}">
+📊 EXCEL
+</a>
+
+</div>
+
+</div>
+
+
+<!-- SALARY SLIP -->
+
+<a
+href="/export-salary-slips/{{ site }}/{{ month }}/{{ year }}"
+class="button"
+>
+💰 SALARY SLIPS
+</a>
+
+
+<a
+href="/show-attendance/{{ site }}"
+class="button"
+>
+← CHANGE MONTH
+</a>
+
+
+<a
+href="/"
+class="button"
+>
+🏠 HOME
+</a>
+
+
+</div>
+
+</div>
+
+
+
+<!-- ================= ATTENDANCE TABLE ================= -->
+
+<div class="card">
+
+<h2 class="section-title">
+Employee Attendance & Salary
+</h2>
+
+
+<div class="table-wrapper">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th class="employee-info">
+Employee Name
+</th>
+
+<th>
+Emp Code
+</th>
+
+<th>
+Designation
+</th>
+
+<th>
+Skill
+</th>
+
+
+{% for day in calendar_days %}
+
+<th colspan="2" class="date-header">
+{{ day }}
+</th>
+
+{% endfor %}
+
+
+<th>
+Present
+</th>
+
+<th>
+OT Hours
+</th>
+
+<th>
+Basic Rate
+</th>
+
+<th>
+Gross Rate
+</th>
+
+<th>
+Basic Payable
+</th>
+
+<th>
+Gross Payable
+</th>
+
+<th>
+EPF
+</th>
+
+<th>
+ESIC
+</th>
+
+<th>
+1st Payment<br>Before Deduction
+</th>
+
+<th>
+Profession Tax
+</th>
+
+<th>
+Advance Deduction
+</th>
+
+<th>
+Other Deduction
+</th>
+
+<th>
+Total Deduction
+</th>
+
+<th>
+1st Payment
+</th>
+
+<th>
+OT Payable
+</th>
+
+<th>
+2nd Payment
+</th>
+
+<th>
+Total Payment
+</th>
+
+</tr>
+
+<tr>
+
+<th colspan="4" class="sub-header-space"></th>
+
+{% for day in calendar_days %}
+
+<th class="sub-header">
+Present
+</th>
+
+<th class="sub-header">
+OT
+</th>
+
+{% endfor %}
+
+<th colspan="18" class="sub-header-space"></th>
+
+</tr>
+
+</thead>
+
+
+<tbody>
+
+
+{% for employee in employees %}
+
+<tr>
+
+
+<td class="employee-info">
+{{ employee["name"] }}
+</td>
+
+
+<td>
+{{ employee["employee_code"] }}
+</td>
+
+
+<td>
+{{ employee["designation"] }}
+</td>
+
+
+<td>
+{{ employee["skill"] }}
+</td>
+
+
+<!-- ATTENDANCE -->
+
+{% for item in employee["daily_attendance"] %}
+
+<td class="attendance
+
+{% if item['status'] == 'P' %}
+present
+{% elif item['status'] == 'A' %}
+absent
+{% elif item['status'] == 'W/O' %}
+weekoff
+{% elif item['status'] == 'NH' %}
+holiday
+{% elif item['status'] == 'FL' %}
+leave
+{% endif %}"
+
+>
+
+{{ item['status'] }}
+
+</td>
+
+<td class="attendance ot-cell">
+
+{{ "%.1f"|format(item['ot']) }}
+
+</td>
+
+{% endfor %}
+
+
+<td>
+{{ employee["present_days"] }}
+</td>
+
+
+<td>
+{{ employee["ot_hours"] }}
+</td>
+
+
+<td class="money">
+₹{{ "%.2f"|format(employee["basic_rate"]) }}
+</td>
+
+
+<td class="money">
+₹{{ "%.2f"|format(employee["gross_rate"]) }}
+</td>
+
+
+<td class="money">
+₹{{ "%.2f"|format(employee["basic_payable"]) }}
+</td>
+
+
+<td class="money">
+₹{{ "%.2f"|format(employee["gross_payable"]) }}
+</td>
+
+
+<td class="money">
+₹{{ "%.2f"|format(employee["epf"]) }}
+</td>
+
+
+<td class="money">
+₹{{ "%.2f"|format(employee["esic"]) }}
+</td>
+
+
+<!-- BEFORE DEDUCTION -->
+
+<td class="money before-payment">
+
+₹{{ "%.2f"|format(
+employee["first_payment_before_deduction"]
+) }}
+
+</td>
+
+
+<!-- PROFESSION TAX -->
+
+<td class="deduction-cell">
+
+<form
+class="deduction-form"
+method="POST"
+action="/save-salary-deductions"
+>
+
+<input
+type="hidden"
+name="employee_id"
+value="{{ employee['id'] }}"
+>
+
+<input
+type="hidden"
+name="month"
+value="{{ month }}"
+>
+
+<input
+type="hidden"
+name="year"
+value="{{ year }}"
+>
+
+<input
+type="hidden"
+name="site"
+value="{{ site }}"
+>
+
+<input
+class="deduction-input"
+type="number"
+step="0.01"
+min="0"
+name="profession_tax"
+value="{{ employee['profession_tax'] }}"
+>
+
+<button
+class="save-small"
+type="submit"
+>
+SAVE
+</button>
+
+</form>
+
+</td>
+
+
+<!-- ADVANCE -->
+
+<td class="deduction-cell">
+
+<form
+class="deduction-form"
+method="POST"
+action="/save-salary-deductions"
+>
+
+<input
+type="hidden"
+name="employee_id"
+value="{{ employee['id'] }}"
+>
+
+<input
+type="hidden"
+name="month"
+value="{{ month }}"
+>
+
+<input
+type="hidden"
+name="year"
+value="{{ year }}"
+>
+
+<input
+type="hidden"
+name="site"
+value="{{ site }}"
+>
+
+<input
+type="hidden"
+name="profession_tax"
+value="{{ employee['profession_tax'] }}"
+>
+
+<input
+class="deduction-input"
+type="number"
+step="0.01"
+min="0"
+name="advance_deduction"
+value="{{ employee['advance_deduction'] }}"
+>
+
+<input
+type="hidden"
+name="other_deduction"
+value="{{ employee['other_deduction'] }}"
+>
+
+<button
+class="save-small"
+type="submit"
+>
+SAVE
+</button>
+
+</form>
+
+</td>
+
+
+<!-- OTHER -->
+
+<td class="deduction-cell">
+
+<form
+class="deduction-form"
+method="POST"
+action="/save-salary-deductions"
+>
+
+<input
+type="hidden"
+name="employee_id"
+value="{{ employee['id'] }}"
+>
+
+<input
+type="hidden"
+name="month"
+value="{{ month }}"
+>
+
+<input
+type="hidden"
+name="year"
+value="{{ year }}"
+>
+
+<input
+type="hidden"
+name="site"
+value="{{ site }}"
+>
+
+<input
+type="hidden"
+name="profession_tax"
+value="{{ employee['profession_tax'] }}"
+>
+
+<input
+type="hidden"
+name="advance_deduction"
+value="{{ employee['advance_deduction'] }}"
+>
+
+<input
+class="deduction-input"
+type="number"
+step="0.01"
+min="0"
+name="other_deduction"
+value="{{ employee['other_deduction'] }}"
+>
+
+<button
+class="save-small"
+type="submit"
+>
+SAVE
+</button>
+
+</form>
+
+</td>
+
+
+<!-- TOTAL DEDUCTION -->
+
+<td class="money">
+
+₹{{ "%.2f"|format(
+employee["total_deductions"]
+) }}
+
+</td>
+
+
+<!-- FINAL 1ST PAYMENT -->
+
+<td class="money final-payment">
+
+₹{{ "%.2f"|format(
+employee["first_payment"]
+) }}
+
+</td>
+
+
+<!-- OT -->
+
+<td class="money">
+
+₹{{ "%.2f"|format(
+employee["ot_payable"]
+) }}
+
+</td>
+
+
+<!-- SECOND PAYMENT -->
+
+<td class="money">
+
+₹{{ "%.2f"|format(
+employee["second_payment"]
+) }}
+
+</td>
+
+
+<!-- TOTAL -->
+
+<td class="money final-payment">
+
+₹{{ "%.2f"|format(
+employee["total_payment"]
+) }}
+
+</td>
+
+
+</tr>
+
+{% endfor %}
+
+
+
+<!-- ================= TOTAL ================= -->
+
+<tr class="total-row">
+
+<td class="employee-info">
+TOTAL
+</td>
+
+<td></td>
+<td></td>
+<td></td>
+
+
+{% for day in calendar_days %}
+
+<td></td>
+
+{% endfor %}
+
+
+<td>
+{{ totals["present_days"] }}
+</td>
+
+
+<td>
+{{ totals["ot_hours"] }}
+</td>
+
+
+<td></td>
+<td></td>
+
+
+<td class="money">
+₹{{ "%.2f"|format(
+totals["basic_payable"]
+) }}
+</td>
+
+
+<td class="money">
+₹{{ "%.2f"|format(
+totals["gross_payable"]
+) }}
+</td>
+
+
+<td class="money">
+₹{{ "%.2f"|format(
+totals["epf"]
+) }}
+</td>
+
+
+<td class="money">
+₹{{ "%.2f"|format(
+totals["esic"]
+) }}
+</td>
+
+
+<td class="money">
+₹{{ "%.2f"|format(
+totals["first_payment_before_deduction"]
+) }}
+</td>
+
+
+<td class="money">
+₹{{ "%.2f"|format(
+totals["profession_tax"]
+) }}
+</td>
+
+
+<td class="money">
+₹{{ "%.2f"|format(
+totals["advance_deduction"]
+) }}
+</td>
+
+
+<td class="money">
+₹{{ "%.2f"|format(
+totals["other_deduction"]
+) }}
+</td>
+
+
+<td class="money">
+₹{{ "%.2f"|format(
+totals["total_deductions"]
+) }}
+</td>
+
+
+<td class="money">
+₹{{ "%.2f"|format(
+totals["first_payment"]
+) }}
+</td>
+
+
+<td class="money">
+₹{{ "%.2f"|format(
+totals["ot_payable"]
+) }}
+</td>
+
+
+<td class="money">
+₹{{ "%.2f"|format(
+totals["second_payment"]
+) }}
+</td>
+
+
+<td class="money">
+₹{{ "%.2f"|format(
+totals["total_payment"]
+) }}
+</td>
+
+
+</tr>
+
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+
+
+<!-- ================= EXPENSE SUMMARY ================= -->
+
+<div class="card">
+
+<h2 class="section-title">
+💰 Monthly Salary Summary
+</h2>
+
+
+<div class="summary-grid">
+
+
+<div class="summary-box">
+
+<div class="summary-title">
+TOTAL BASIC
+</div>
+
+<div class="summary-value">
+₹{{ "%.2f"|format(
+totals["basic_payable"]
+) }}
+</div>
+
+</div>
+
+
+<div class="summary-box">
+
+<div class="summary-title">
+TOTAL GROSS
+</div>
+
+<div class="summary-value">
+₹{{ "%.2f"|format(
+totals["gross_payable"]
+) }}
+</div>
+
+</div>
+
+
+<div class="summary-box">
+
+<div class="summary-title">
+TOTAL EPF
+</div>
+
+<div class="summary-value">
+₹{{ "%.2f"|format(
+totals["epf"]
+) }}
+</div>
+
+</div>
+
+
+<div class="summary-box">
+
+<div class="summary-title">
+TOTAL ESIC
+</div>
+
+<div class="summary-value">
+₹{{ "%.2f"|format(
+totals["esic"]
+) }}
+</div>
+
+</div>
+
+
+<div class="summary-box">
+
+<div class="summary-title">
+TOTAL PROFESSION TAX
+</div>
+
+<div class="summary-value">
+₹{{ "%.2f"|format(
+totals["profession_tax"]
+) }}
+</div>
+
+</div>
+
+
+<div class="summary-box">
+
+<div class="summary-title">
+TOTAL ADVANCE DEDUCTION
+</div>
+
+<div class="summary-value">
+₹{{ "%.2f"|format(
+totals["advance_deduction"]
+) }}
+</div>
+
+</div>
+
+
+<div class="summary-box">
+
+<div class="summary-title">
+TOTAL OTHER DEDUCTION
+</div>
+
+<div class="summary-value">
+₹{{ "%.2f"|format(
+totals["other_deduction"]
+) }}
+</div>
+
+</div>
+
+
+<div class="summary-box">
+
+<div class="summary-title">
+TOTAL DEDUCTION
+</div>
+
+<div class="summary-value">
+₹{{ "%.2f"|format(
+totals["total_deductions"]
+) }}
+</div>
+
+</div>
+
+
+<div class="summary-box">
+
+<div class="summary-title">
+1ST PAYMENT
+</div>
+
+<div class="summary-value">
+₹{{ "%.2f"|format(
+totals["first_payment"]
+) }}
+</div>
+
+</div>
+
+
+<div class="summary-box">
+
+<div class="summary-title">
+TOTAL OT
+</div>
+
+<div class="summary-value">
+₹{{ "%.2f"|format(
+totals["ot_payable"]
+) }}
+</div>
+
+</div>
+
+
+<div class="summary-box">
+
+<div class="summary-title">
+2ND PAYMENT
+</div>
+
+<div class="summary-value">
+₹{{ "%.2f"|format(
+totals["second_payment"]
+) }}
+</div>
+
+</div>
+
+
+<div class="summary-box">
+
+<div class="summary-title">
+GRAND TOTAL
+</div>
+
+<div class="summary-value">
+₹{{ "%.2f"|format(
+totals["total_payment"]
+) }}
+</div>
+
+</div>
+
+
+</div>
+
+
+<div class="note">
+
+* Profession Tax, Advance Deduction aur Other Deduction default 0 hain.
+<br>
+* Deduction save karne ke baad 1st Payment automatically recalculate hota hai.
+<br>
+* SALARY SLIPS button se ek hi PDF mein site ke saare employees ke salary slips generate honge.
+
+</div>
+
+</div>
+
+
+</div>
+
+</body>
+
+</html>

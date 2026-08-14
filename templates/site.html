@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Fill Attendance - Select Site</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+
+    min-height: 100vh;
+
+    background: #07111f;
+
+    color: white;
+
+    font-family: Arial, sans-serif;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    padding: 30px;
+}
+
+.container {
+
+    width: 100%;
+
+    max-width: 1050px;
+
+    text-align: center;
+}
+
+.header {
+
+    margin-bottom: 45px;
+}
+
+h1 {
+
+    font-size: 36px;
+
+    letter-spacing: 1px;
+
+    margin-bottom: 10px;
+}
+
+.subtitle {
+
+    color: #9fb0c5;
+
+    font-size: 15px;
+}
+
+.site-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 25px;
+}
+
+.site-card {
+
+    min-height: 190px;
+
+    background: #0d1b2d;
+
+    border: 1px solid #263a52;
+
+    border-radius: 18px;
+
+    color: white;
+
+    text-decoration: none;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    transition: 0.25s;
+
+}
+
+.site-card:hover {
+
+    transform: translateY(-7px);
+
+    border-color: #4da3ff;
+
+    background: #12263d;
+
+    box-shadow:
+        0 10px 30px
+        rgba(0, 0, 0, 0.25);
+}
+
+.site-icon {
+
+    font-size: 48px;
+
+    margin-bottom: 15px;
+}
+
+.site-name {
+
+    font-size: 25px;
+
+    font-weight: bold;
+
+    color: #4da3ff;
+}
+
+.site-description {
+
+    margin-top: 8px;
+
+    color: #8fa4bb;
+
+    font-size: 13px;
+}
+
+.bottom-buttons {
+
+    margin-top: 40px;
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 12px;
+}
+
+.bottom-button {
+
+    padding: 12px 22px;
+
+    border-radius: 8px;
+
+    text-decoration: none;
+
+    font-weight: bold;
+
+    color: white;
+}
+
+.manage-button {
+
+    background: #236b45;
+}
+
+.manage-button:hover {
+
+    background: #2d8556;
+}
+
+.home-button {
+
+    background: #39495c;
+}
+
+.home-button:hover {
+
+    background: #4b5d72;
+}
+
+.footer {
+
+    margin-top: 35px;
+
+    color: #64778d;
+
+    font-size: 12px;
+}
+
+@media(max-width: 750px) {
+
+    body {
+
+        padding: 20px;
+    }
+
+    .site-grid {
+
+        grid-template-columns: 1fr;
+    }
+
+    h1 {
+
+        font-size: 28px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<div class="header">
+
+<h1>
+FILL ATTENDANCE
+</h1>
+
+<div class="subtitle">
+Select Site / Location
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     SITE SELECTION
+===================================================== -->
+
+<div class="site-grid">
+
+
+{% for site in sites %}
+
+
+<a
+    href="/select-month/{{ site }}"
+    class="site-card"
+>
+
+
+<div class="site-icon">
+📍
+</div>
+
+
+<div class="site-name">
+{{ site }}
+</div>
+
+
+<div class="site-description">
+Select this location for attendance
+</div>
+
+
+</a>
+
+
+{% endfor %}
+
+
+</div>
+
+
+<!-- =====================================================
+     BOTTOM BUTTONS
+===================================================== -->
+
+<div class="bottom-buttons">
+
+
+<a
+    href="/employees/all"
+    class="bottom-button manage-button"
+>
+MANAGE EMPLOYEE
+</a>
+
+
+<a
+    href="/"
+    class="bottom-button home-button"
+>
+HOME
+</a>
+
+
+</div>
+
+
+<div class="footer">
+
+SDC Attendance Management System
+
+</div>
+
+
+</div>
+
+
+</body>
+
+</html>

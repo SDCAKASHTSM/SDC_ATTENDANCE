@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Manage Employees</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+
+    min-height: 100vh;
+
+    background: #07111f;
+
+    color: white;
+
+    font-family: Arial, sans-serif;
+
+    padding: 35px;
+}
+
+.container {
+
+    max-width: 1500px;
+
+    margin: auto;
+}
+
+/* ================= HEADER ================= */
+
+.header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 30px;
+}
+
+h1 {
+
+    font-size: 32px;
+}
+
+.subtitle {
+
+    color: #4da3ff;
+
+    margin-top: 8px;
+}
+
+.header-buttons {
+
+    display: flex;
+
+    gap: 10px;
+}
+
+.home-button,
+.attendance-button {
+
+    text-decoration: none;
+
+    color: white;
+
+    padding: 10px 18px;
+
+    border-radius: 8px;
+
+    font-weight: bold;
+}
+
+.home-button {
+
+    background: #1769aa;
+}
+
+.home-button:hover {
+
+    background: #2185d0;
+}
+
+.attendance-button {
+
+    background: #39495c;
+}
+
+.attendance-button:hover {
+
+    background: #4b5d72;
+}
+
+/* ================= CARD ================= */
+
+.card {
+
+    background: #0d1b2d;
+
+    border: 1px solid #263a52;
+
+    border-radius: 16px;
+
+    padding: 25px;
+
+    margin-bottom: 25px;
+}
+
+.card h2 {
+
+    margin-bottom: 18px;
+}
+
+/* ================= STATS ================= */
+
+.stats {
+
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 15px;
+
+    margin-bottom: 25px;
+}
+
+.stat-box {
+
+    background: #07111f;
+
+    border: 1px solid #263a52;
+
+    border-radius: 12px;
+
+    padding: 20px;
+}
+
+.stat-title {
+
+    color: #8fa4bb;
+
+    font-size: 13px;
+
+    margin-bottom: 8px;
+
+    text-transform: uppercase;
+}
+
+.stat-value {
+
+    font-size: 28px;
+
+    font-weight: bold;
+
+    color: #7dd3a8;
+}
+
+/* ================= ADD EMPLOYEE ================= */
+
+.add-form {
+
+    display: grid;
+
+    grid-template-columns:
+        1.4fr
+        1fr
+        1.1fr
+        1.1fr
+        0.8fr
+        0.8fr
+        auto;
+
+    gap: 12px;
+}
+
+input {
+
+    padding: 13px;
+
+    background: #07111f;
+
+    color: white;
+
+    border: 1px solid #263a52;
+
+    border-radius: 8px;
+
+    outline: none;
+}
+
+input:focus {
+
+    border-color: #4da3ff;
+}
+
+.add-button {
+
+    padding: 13px 22px;
+
+    background: #1769aa;
+
+    color: white;
+
+    border: none;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    font-weight: bold;
+}
+
+.add-button:hover {
+
+    background: #2185d0;
+}
+
+/* ================= IMPORT ================= */
+
+.import-info {
+
+    color: #8fa4bb;
+
+    font-size: 13px;
+
+    margin-bottom: 15px;
+
+    line-height: 1.6;
+}
+
+.import-info b {
+
+    color: #7dd3a8;
+}
+
+.import-button {
+
+    padding: 13px 22px;
+
+    background: #236b45;
+
+    color: white;
+
+    border: none;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    font-weight: bold;
+}
+
+.import-button:hover {
+
+    background: #2d8556;
+}
+
+/* ================= SEARCH ================= */
+
+.search-area {
+
+    display: flex;
+
+    gap: 10px;
+
+    margin-bottom: 20px;
+}
+
+.search-box {
+
+    flex: 1;
+}
+
+.site-select {
+
+    padding: 13px;
+
+    background: #07111f;
+
+    color: white;
+
+    border: 1px solid #263a52;
+
+    border-radius: 8px;
+
+    outline: none;
+
+    min-width: 150px;
+}
+
+.search-button {
+
+    padding: 13px 22px;
+
+    background: #1769aa;
+
+    color: white;
+
+    border: none;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    font-weight: bold;
+}
+
+.search-button:hover {
+
+    background: #2185d0;
+}
+
+.clear-button {
+
+    padding: 13px 20px;
+
+    background: #39495c;
+
+    color: white;
+
+    text-decoration: none;
+
+    border-radius: 8px;
+
+    display: flex;
+
+    align-items: center;
+}
+
+/* ================= TABLE ================= */
+
+.table-wrapper {
+
+    width: 100%;
+
+    overflow-x: auto;
+}
+
+table {
+
+    width: 100%;
+
+    border-collapse: collapse;
+
+    min-width: 1250px;
+}
+
+th,
+td {
+
+    padding: 14px;
+
+    border-bottom: 1px solid #263a52;
+
+    text-align: left;
+
+    white-space: nowrap;
+}
+
+th {
+
+    color: #8fa4bb;
+
+    font-size: 13px;
+
+    text-transform: uppercase;
+}
+
+tr:hover {
+
+    background: #12263d;
+}
+
+.basic {
+
+    color: #7dd3a8;
+
+    font-weight: bold;
+}
+
+.gross {
+
+    color: #ffd66b;
+
+    font-weight: bold;
+}
+
+/* ================= SITE ================= */
+
+.site-badge {
+
+    display: inline-block;
+
+    padding: 5px 10px;
+
+    border-radius: 6px;
+
+    background: #1769aa;
+
+    font-size: 12px;
+
+    font-weight: bold;
+}
+
+/* ================= ACTION ================= */
+
+.action-buttons {
+
+    display: flex;
+
+    gap: 8px;
+}
+
+.edit-button {
+
+    background: #5b4b22;
+
+    border: 1px solid #d7b35a;
+
+    color: #ffd66b;
+
+    padding: 8px 15px;
+
+    border-radius: 7px;
+
+    cursor: pointer;
+
+    font-weight: bold;
+}
+
+.edit-button:hover {
+
+    background: #806a2d;
+
+    color: white;
+}
+
+.delete-button {
+
+    background: #642626;
+
+    border: 1px solid #a94444;
+
+    color: #ff8f8f;
+
+    padding: 8px 15px;
+
+    border-radius: 7px;
+
+    cursor: pointer;
+
+    font-weight: bold;
+}
+
+.delete-button:hover {
+
+    background: #8b3030;
+
+    color: white;
+}
+
+/* ================= EMPTY ================= */
+
+.empty {
+
+    text-align: center;
+
+    padding: 50px;
+
+    color: #71859b;
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width: 900px) {
+
+    body {
+
+        padding: 20px;
+    }
+
+    .header {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 15px;
+    }
+
+    .stats {
+
+        grid-template-columns: 1fr;
+    }
+
+    .add-form {
+
+        grid-template-columns: 1fr;
+    }
+
+    .search-area {
+
+        flex-direction: column;
+    }
+
+    .site-select {
+
+        width: 100%;
+    }
+
+    .action-buttons {
+
+        flex-direction: column;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+<!-- ================= HEADER ================= -->
+
+<div class="header">
+
+<div>
+
+<h1>
+MANAGE EMPLOYEES
+</h1>
+
+<div class="subtitle">
+Central Employee Master Data
+</div>
+
+</div>
+
+
+<div class="header-buttons">
+
+<a
+href="/"
+class="home-button">
+
+HOME
+
+</a>
+
+<a
+href="/fill-attendance"
+class="attendance-button">
+
+ATTENDANCE
+
+</a>
+
+</div>
+
+</div>
+
+
+<!-- ================= STATS ================= -->
+
+<div class="stats">
+
+<div class="stat-box">
+
+<div class="stat-title">
+Total Employees
+</div>
+
+<div class="stat-value">
+{{ total_employees }}
+</div>
+
+</div>
+
+
+<div class="stat-box">
+
+<div class="stat-title">
+Selected Site
+</div>
+
+<div class="stat-value">
+{{ selected_site }}
+</div>
+
+</div>
+
+
+<div class="stat-box">
+
+<div class="stat-title">
+Showing
+</div>
+
+<div class="stat-value">
+{{ employees|length }}
+</div>
+
+</div>
+
+</div>
+
+
+<!-- ================= ADD EMPLOYEE ================= -->
+
+<div class="card">
+
+<h2>
+Add Employee Manually
+</h2>
+
+
+<form
+class="add-form"
+method="POST"
+action="/add-employee"
+>
+
+
+<input
+type="text"
+name="name"
+placeholder="Employee Name"
+required
+>
+
+
+<input
+type="text"
+name="employee_code"
+placeholder="Employee Code"
+required
+>
+
+
+<input
+type="text"
+name="designation"
+placeholder="Designation"
+required
+>
+
+
+<input
+type="text"
+name="skill"
+placeholder="Skill"
+required
+>
+
+
+<input
+type="number"
+name="basic"
+placeholder="Basic Rate"
+min="0"
+step="0.01"
+required
+>
+
+
+<input
+type="number"
+name="gross"
+placeholder="Gross"
+min="0"
+step="0.01"
+required
+>
+
+
+<select
+name="site"
+class="site-select"
+required
+>
+
+<option value="">
+Select Site
+</option>
+
+{% for site in sites %}
+
+<option value="{{ site }}">
+{{ site }}
+</option>
+
+{% endfor %}
+
+</select>
+
+
+<button
+type="submit"
+class="add-button">
+
++ ADD EMPLOYEE
+
+</button>
+
+
+</form>
+
+</div>
+
+
+<!-- ================= IMPORT EXCEL ================= -->
+
+<div class="card">
+
+<h2>
+Import Employees from Excel
+</h2>
+
+
+<div class="import-info">
+
+Excel columns:
+
+<b>
+Employee Name | Employee Code | Designation | Skill | Site | Basic | Gross
+</b>
+
+<br>
+
+Basic aur Gross employee master data ke liye store honge.
+Salary calculation yahan nahi hogi.
+
+</div>
+
+
+<form
+method="POST"
+action="/import-employees"
+enctype="multipart/form-data"
+>
+
+
+<input
+type="file"
+name="excel_file"
+accept=".xlsx"
+required
+>
+
+
+<br><br>
+
+
+<button
+type="submit"
+class="import-button">
+
+IMPORT EXCEL
+
+</button>
+
+
+</form>
+
+</div>
+
+
+<!-- ================= EMPLOYEE LIST ================= -->
+
+<div class="card">
+
+<h2>
+Employee List
+</h2>
+
+
+<!-- SEARCH -->
+
+<form
+class="search-area"
+method="GET"
+action="/manage-employees"
+>
+
+
+<input
+class="search-box"
+type="text"
+name="search"
+value="{{ search }}"
+placeholder="Search Name, Code, Designation or Skill..."
+>
+
+
+<select
+class="site-select"
+name="site"
+>
+
+<option
+value="ALL"
+{% if selected_site == "ALL" %}
+selected
+{% endif %}
+>
+
+ALL SITES
+
+</option>
+
+
+{% for site in sites %}
+
+<option
+value="{{ site }}"
+{% if selected_site == site %}
+selected
+{% endif %}
+>
+
+{{ site }}
+
+</option>
+
+{% endfor %}
+
+</select>
+
+
+<button
+type="submit"
+class="search-button">
+
+SEARCH
+
+</button>
+
+
+{% if search or selected_site != "ALL" %}
+
+<a
+href="/manage-employees"
+class="clear-button">
+
+CLEAR
+
+</a>
+
+{% endif %}
+
+
+</form>
+
+
+<!-- ================= TABLE ================= -->
+
+{% if employees %}
+
+
+<div class="table-wrapper">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Employee Name</th>
+
+<th>Employee Code</th>
+
+<th>Designation</th>
+
+<th>Skill</th>
+
+<th>Site</th>
+
+<th>Basic</th>
+
+<th>Gross</th>
+
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+
+<tbody>
+
+
+{% for employee in employees %}
+
+
+<tr>
+
+<td>
+{{ employee["name"] }}
+</td>
+
+
+<td>
+{{ employee["employee_code"] }}
+</td>
+
+
+<td>
+{{ employee["designation"] }}
+</td>
+
+
+<td>
+{{ employee["skill"] }}
+</td>
+
+
+<td>
+
+<span class="site-badge">
+
+{{ employee["site"] }}
+
+</span>
+
+</td>
+
+
+<td class="basic">
+
+₹ {{ "%.2f"|format(employee["basic"] or 0) }}
+
+</td>
+
+
+<td class="gross">
+
+₹ {{ "%.2f"|format(employee["gross"] or 0) }}
+
+</td>
+
+
+<td>
+
+<div class="action-buttons">
+
+
+<!-- EDIT -->
+
+<button
+type="button"
+class="edit-button"
+onclick="editEmployee({{ employee['id'] }})">
+
+EDIT
+
+</button>
+
+
+<!-- DELETE -->
+
+<form
+method="POST"
+action="/delete-employee/{{ employee['id'] }}"
+onsubmit="return confirmDelete();"
+>
+
+<button
+type="submit"
+class="delete-button">
+
+DELETE
+
+</button>
+
+</form>
+
+
+</div>
+
+</td>
+
+</tr>
+
+
+{% endfor %}
+
+
+</tbody>
+
+</table>
+
+</div>
+
+
+{% else %}
+
+
+<div class="empty">
+
+No employees found.
+
+</div>
+
+
+{% endif %}
+
+
+</div>
+
+
+</div>
+
+
+<script>
+
+
+function editEmployee(employeeId) {
+
+    window.location.href =
+        "/edit-employee/"
+        + employeeId;
+
+}
+
+
+function confirmDelete() {
+
+    return confirm(
+        "Are you sure you want to DELETE this employee?\n\n"
+        + "Employee ka data permanently delete ho jayega."
+    );
+
+}
+
+
+</script>
+
+
+</body>
+
+</html>

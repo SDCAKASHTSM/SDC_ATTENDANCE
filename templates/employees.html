@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Employee Management</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+
+    min-height: 100vh;
+
+    background: #07111f;
+
+    color: white;
+
+    font-family: Arial, sans-serif;
+
+    padding: 35px;
+}
+
+.container {
+
+    width: 100%;
+
+    max-width: 1500px;
+
+    margin: auto;
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 30px;
+
+    gap: 20px;
+}
+
+h1 {
+
+    font-size: 32px;
+}
+
+.site {
+
+    color: #4da3ff;
+
+    margin-top: 8px;
+
+    font-size: 15px;
+}
+
+.month-info {
+
+    margin-top: 8px;
+
+    color: #7dd3a8;
+
+    font-weight: bold;
+}
+
+.header-buttons {
+
+    display: flex;
+
+    gap: 10px;
+
+    flex-wrap: wrap;
+}
+
+.home-button,
+.back {
+
+    text-decoration: none;
+
+    color: white;
+
+    padding: 10px 18px;
+
+    border-radius: 8px;
+
+    font-weight: bold;
+
+    border: 1px solid #263a52;
+}
+
+.home-button {
+
+    background: #1769aa;
+
+    border: none;
+}
+
+.home-button:hover {
+
+    background: #2185d0;
+}
+
+.back {
+
+    background: #39495c;
+}
+
+.back:hover {
+
+    background: #4b5d72;
+}
+
+
+/* =====================================================
+   CARD
+===================================================== */
+
+.card {
+
+    background: #0d1b2d;
+
+    border: 1px solid #263a52;
+
+    border-radius: 16px;
+
+    padding: 25px;
+
+    margin-bottom: 25px;
+}
+
+.card h2 {
+
+    margin-bottom: 18px;
+
+    font-size: 21px;
+}
+
+
+/* =====================================================
+   ADD EMPLOYEE FORM
+===================================================== */
+
+.add-form {
+
+    display: grid;
+
+    grid-template-columns:
+        1.4fr
+        1fr
+        1.1fr
+        1.1fr
+        0.8fr
+        0.8fr
+        auto;
+
+    gap: 12px;
+}
+
+input,
+select {
+
+    padding: 13px;
+
+    background: #07111f;
+
+    color: white;
+
+    border: 1px solid #263a52;
+
+    border-radius: 8px;
+
+    outline: none;
+
+    font-size: 14px;
+}
+
+input:focus,
+select:focus {
+
+    border-color: #4da3ff;
+}
+
+button {
+
+    padding: 13px 22px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    font-weight: bold;
+
+    color: white;
+}
+
+.add-button {
+
+    background: #1769aa;
+}
+
+.add-button:hover {
+
+    background: #2185d0;
+}
+
+
+/* =====================================================
+   IMPORT
+===================================================== */
+
+.import-info {
+
+    color: #8fa4bb;
+
+    font-size: 13px;
+
+    margin-bottom: 15px;
+
+    line-height: 1.7;
+}
+
+.import-info b {
+
+    color: #7dd3a8;
+}
+
+.import-button {
+
+    background: #236b45;
+
+    margin-top: 15px;
+}
+
+.import-button:hover {
+
+    background: #2d8556;
+}
+
+
+/* =====================================================
+   SEARCH
+===================================================== */
+
+.search-area {
+
+    display: flex;
+
+    gap: 10px;
+
+    margin-bottom: 22px;
+}
+
+.search-box {
+
+    flex: 1;
+}
+
+.search-button {
+
+    background: #1769aa;
+}
+
+.search-button:hover {
+
+    background: #2185d0;
+}
+
+.clear-button {
+
+    background: #39495c;
+
+    text-decoration: none;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 0 20px;
+
+    border-radius: 8px;
+
+    color: white;
+}
+
+.clear-button:hover {
+
+    background: #4b5d72;
+}
+
+
+/* =====================================================
+   TABLE
+===================================================== */
+
+.table-wrapper {
+
+    width: 100%;
+
+    overflow-x: auto;
+}
+
+table {
+
+    width: 100%;
+
+    border-collapse: collapse;
+
+    min-width: 1100px;
+}
+
+th,
+td {
+
+    padding: 14px;
+
+    border-bottom: 1px solid #263a52;
+
+    text-align: left;
+
+    white-space: nowrap;
+}
+
+th {
+
+    color: #8fa4bb;
+
+    font-size: 13px;
+
+    text-transform: uppercase;
+}
+
+tbody tr:hover {
+
+    background: #12263d;
+}
+
+.basic {
+
+    color: #7dd3a8;
+
+    font-weight: bold;
+}
+
+.gross {
+
+    color: #ffd66b;
+
+    font-weight: bold;
+}
+
+
+/* =====================================================
+   ACTION BUTTONS
+===================================================== */
+
+.action-buttons {
+
+    display: flex;
+
+    gap: 8px;
+}
+
+.select-button {
+
+    background: #0d1b2d;
+
+    border: 1px solid #4da3ff;
+
+    color: #4da3ff;
+
+    padding: 8px 15px;
+}
+
+.select-button:hover {
+
+    background: #1769aa;
+
+    color: white;
+}
+
+.edit-button {
+
+    background: #5b4b22;
+
+    border: 1px solid #d7b35a;
+
+    color: #ffd66b;
+
+    padding: 8px 15px;
+}
+
+.edit-button:hover {
+
+    background: #806a2d;
+
+    color: white;
+}
+
+
+/* =====================================================
+   EMPTY
+===================================================== */
+
+.empty {
+
+    text-align: center;
+
+    padding: 45px;
+
+    color: #71859b;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media(max-width: 1100px) {
+
+    .add-form {
+
+        grid-template-columns: 1fr 1fr;
+
+    }
+
+}
+
+@media(max-width: 700px) {
+
+    body {
+
+        padding: 20px;
+    }
+
+    .header {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+
+    .add-form {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .search-area {
+
+        flex-direction: column;
+    }
+
+    .action-buttons {
+
+        flex-direction: column;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<div class="header">
+
+
+<div>
+
+<h1>
+{% if attendance_mode %}
+{{ site }} EMPLOYEES
+{% else %}
+MANAGE EMPLOYEE
+{% endif %}
+</h1>
+
+
+<div class="site">
+Employee Master Data
+</div>
+
+
+{% if attendance_mode %}
+
+<div class="month-info">
+
+ATTENDANCE MONTH:
+{{ month_name }} {{ selected_year }}
+
+</div>
+
+{% endif %}
+
+
+</div>
+
+
+<div class="header-buttons">
+
+
+<a
+    href="/"
+    class="home-button"
+>
+HOME
+</a>
+
+
+{% if attendance_mode %}
+
+<a
+    href="/select-month/{{ site }}"
+    class="back"
+>
+CHANGE MONTH
+</a>
+
+{% else %}
+
+<a
+    href="/"
+    class="back"
+>
+BACK
+</a>
+
+{% endif %}
+
+
+</div>
+
+
+</div>
+
+
+<!-- =====================================================
+     ADD EMPLOYEE
+===================================================== -->
+
+<div class="card">
+
+
+<h2>
+Add Employee Manually
+</h2>
+
+
+<form
+    class="add-form"
+    method="POST"
+    action="/add-employee"
+>
+
+
+<input
+    type="text"
+    name="name"
+    placeholder="Employee Name"
+    required
+>
+
+
+<input
+    type="text"
+    name="employee_code"
+    placeholder="Employee Code"
+    required
+>
+
+
+<input
+    type="text"
+    name="designation"
+    placeholder="Designation"
+    required
+>
+
+
+<input
+    type="text"
+    name="skill"
+    placeholder="Skill"
+>
+
+
+<select
+    name="site"
+    required
+>
+
+<option value="">
+Select Site
+</option>
+
+<option value="TSM">
+TSM
+</option>
+
+<option value="TSK">
+TSK
+</option>
+
+<option value="NINL">
+NINL
+</option>
+
+</select>
+
+
+<input
+    type="number"
+    name="basic"
+    placeholder="Basic Rate"
+    min="0"
+    step="0.01"
+    required
+>
+
+
+<input
+    type="number"
+    name="gross"
+    placeholder="Gross Rate"
+    min="0"
+    step="0.01"
+    required
+>
+
+
+<button
+    type="submit"
+    class="add-button"
+>
+ADD EMPLOYEE
+</button>
+
+
+</form>
+
+
+</div>
+
+
+<!-- =====================================================
+     IMPORT EXCEL
+===================================================== -->
+
+<div class="card">
+
+
+<h2>
+Import Employees from Excel
+</h2>
+
+
+<div class="import-info">
+
+Excel columns must be in this order:
+
+<br>
+
+<b>
+Employee Name |
+Employee Code |
+Designation |
+Skill |
+Site |
+Basic |
+Gross
+</b>
+
+<br><br>
+
+Excel se existing Employee Code milega to us employee ka
+data update hoga.
+
+Naya Employee Code hoga to new employee create hoga.
+
+</div>
+
+
+<form
+    method="POST"
+    action="/import-employees"
+    enctype="multipart/form-data"
+>
+
+
+<input
+    type="file"
+    name="excel_file"
+    accept=".xlsx"
+    required
+>
+
+
+<input
+    type="hidden"
+    name="site"
+    value="{% if site %}{{ site }}{% else %}TSM{% endif %}"
+>
+
+
+<br>
+
+
+<button
+    type="submit"
+    class="import-button"
+>
+IMPORT EXCEL
+</button>
+
+
+</form>
+
+
+</div>
+
+
+<!-- =====================================================
+     EMPLOYEE LIST
+===================================================== -->
+
+<div class="card">
+
+
+<h2>
+Employee List
+</h2>
+
+
+<!-- SEARCH -->
+
+<form
+    class="search-area"
+    method="GET"
+
+    {% if attendance_mode %}
+
+    action="/attendance-employees/{{ site }}/{{ selected_month }}/{{ selected_year }}"
+
+    {% else %}
+
+    action="/employees/{{ site }}"
+
+    {% endif %}
+>
+
+
+<input
+    class="search-box"
+    type="text"
+    name="search"
+    value="{{ search }}"
+    placeholder="Search Name, Code, Designation or Skill..."
+>
+
+
+<button
+    type="submit"
+    class="search-button"
+>
+SEARCH
+</button>
+
+
+{% if search %}
+
+
+{% if attendance_mode %}
+
+<a
+    href="/attendance-employees/{{ site }}/{{ selected_month }}/{{ selected_year }}"
+    class="clear-button"
+>
+CLEAR
+</a>
+
+{% else %}
+
+<a
+    href="/employees/{{ site }}"
+    class="clear-button"
+>
+CLEAR
+</a>
+
+{% endif %}
+
+
+{% endif %}
+
+
+</form>
+
+
+<!-- =====================================================
+     TABLE
+===================================================== -->
+
+{% if employees %}
+
+
+<div class="table-wrapper">
+
+
+<table>
+
+
+<thead>
+
+<tr>
+
+<th>
+Employee Name
+</th>
+
+<th>
+Employee Code
+</th>
+
+<th>
+Designation
+</th>
+
+<th>
+Skill
+</th>
+
+<th>
+Site
+</th>
+
+<th>
+Basic Rate
+</th>
+
+<th>
+Gross Rate
+</th>
+
+<th>
+Action
+</th>
+
+</tr>
+
+</thead>
+
+
+<tbody>
+
+
+{% for employee in employees %}
+
+
+<tr>
+
+
+<td>
+{{ employee["name"] }}
+</td>
+
+
+<td>
+{{ employee["employee_code"] }}
+</td>
+
+
+<td>
+{{ employee["designation"] }}
+</td>
+
+
+<td>
+{{ employee["skill"] }}
+</td>
+
+
+<td>
+{{ employee["site"] }}
+</td>
+
+
+<td class="basic">
+₹ {{ "%.2f"|format(employee["basic"] or 0) }}
+</td>
+
+
+<td class="gross">
+₹ {{ "%.2f"|format(employee["gross"] or 0) }}
+</td>
+
+
+<td>
+
+
+<div class="action-buttons">
+
+
+{% if attendance_mode %}
+
+<button
+    type="button"
+    class="select-button"
+
+    onclick="selectEmployee(
+        {{ employee['id'] }}
+    )"
+>
+SELECT
+</button>
+
+{% endif %}
+
+
+<button
+    type="button"
+    class="edit-button"
+
+    onclick="editEmployee(
+        {{ employee['id'] }}
+    )"
+>
+EDIT
+</button>
+
+
+</div>
+
+
+</td>
+
+
+</tr>
+
+
+{% endfor %}
+
+
+</tbody>
+
+
+</table>
+
+
+</div>
+
+
+{% else %}
+
+
+<div class="empty">
+
+No employees found.
+
+</div>
+
+
+{% endif %}
+
+
+</div>
+
+
+</div>
+
+
+<script>
+
+
+function editEmployee(employeeId) {
+
+    window.location.href =
+        "/edit-employee/"
+        + employeeId;
+
+}
+
+
+{% if attendance_mode %}
+
+function selectEmployee(employeeId) {
+
+    window.location.href =
+        "/attendance/"
+        + employeeId
+        + "/"
+        + {{ selected_month }}
+        + "/"
+        + {{ selected_year }};
+
+}
+
+{% endif %}
+
+
+</script>
+
+
+</body>
+
+</html>

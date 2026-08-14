@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>{{ employee["name"] }} - Attendance</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #07111f;
+    color: white;
+    font-family: Arial, sans-serif;
+    padding: 25px;
+}
+
+.container {
+    max-width: 1250px;
+    margin: auto;
+}
+
+/* ================================
+   TOP BAR
+================================ */
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.home-button {
+    text-decoration: none;
+    color: white;
+    background: #1769aa;
+    padding: 11px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.home-button:hover {
+    background: #2185d0;
+}
+
+.employee-count {
+    color: #8296ad;
+    font-size: 14px;
+}
+
+/* ================================
+   EMPLOYEE NAVIGATION
+================================ */
+
+.employee-navigation {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr 1fr;
+    gap: 15px;
+    margin-bottom: 25px;
+    align-items: stretch;
+}
+
+.nav-employee {
+    background: #0d1b2d;
+    border: 1px solid #263a52;
+    border-radius: 12px;
+    padding: 15px;
+    text-decoration: none;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.nav-employee:hover {
+    border-color: #4da3ff;
+    background: #12263d;
+}
+
+.nav-employee.right {
+    text-align: right;
+}
+
+.nav-label {
+    color: #8296ad;
+    font-size: 11px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.nav-name {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.current-employee {
+    background: #102943;
+    border: 1px solid #4da3ff;
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.current-label {
+    color: #4da3ff;
+    font-size: 11px;
+    margin-bottom: 5px;
+}
+
+.current-name {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* ================================
+   EMPLOYEE DETAILS
+================================ */
+
+.employee-card {
+    background: #0d1b2d;
+    border: 1px solid #263a52;
+    border-radius: 16px;
+    padding: 25px;
+    margin-bottom: 25px;
+}
+
+.employee-name {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.details {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+}
+
+.detail {
+    background: #07111f;
+    border: 1px solid #263a52;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.label {
+    color: #8296ad;
+    font-size: 12px;
+    margin-bottom: 7px;
+}
+
+.value {
+    font-weight: bold;
+}
+
+/* ================================
+   MONTH
+================================ */
+
+.month-title {
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+/* ================================
+   SAVED MESSAGE
+================================ */
+
+.saved {
+    background: #174d36;
+    border: 1px solid #267a52;
+    padding: 13px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* ================================
+   ATTENDANCE CARD
+================================ */
+
+.card {
+    background: #0d1b2d;
+    border: 1px solid #263a52;
+    border-radius: 16px;
+    padding: 20px;
+}
+
+/* ================================
+   UNDO / REDO
+================================ */
+
+.controls {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.control-button {
+    padding: 9px 18px;
+    border: 1px solid #39495c;
+    background: #0d1b2d;
+    color: white;
+    border-radius: 7px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.control-button:hover {
+    border-color: #4da3ff;
+}
+
+.control-button:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+/* ================================
+   TABLE
+================================ */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    color: #8296ad;
+    font-size: 13px;
+    text-transform: uppercase;
+    background: #07111f;
+}
+
+th,
+td {
+    padding: 12px;
+    border-bottom: 1px solid #263a52;
+    text-align: center;
+}
+
+td:first-child,
+th:first-child {
+    text-align: left;
+}
+
+select,
+input {
+    width: 100%;
+    padding: 9px;
+    background: #07111f;
+    color: white;
+    border: 1px solid #263a52;
+    border-radius: 7px;
+}
+
+select:focus,
+input:focus {
+    outline: none;
+    border-color: #4da3ff;
+}
+
+.ot {
+    width: 100px;
+}
+
+/* ================================
+   FUTURE DATE LOCK
+================================ */
+
+.attendance-row.future-date {
+    opacity: 0.45;
+    background: #050b13;
+}
+
+.attendance-row.future-date select,
+.attendance-row.future-date input {
+    cursor: not-allowed;
+    background: #111923;
+    color: #64748b;
+}
+
+.locked-label {
+    color: #64748b;
+    font-size: 12px;
+    margin-left: 6px;
+}
+
+/* ================================
+   SUMMARY
+================================ */
+
+.summary {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+    margin-top: 25px;
+}
+
+.summary-box {
+    background: #07111f;
+    border: 1px solid #263a52;
+    border-radius: 10px;
+    padding: 18px;
+    text-align: center;
+}
+
+.summary-label {
+    color: #8296ad;
+    font-size: 12px;
+}
+
+.summary-value {
+    font-size: 24px;
+    font-weight: bold;
+    margin-top: 8px;
+}
+
+/* ================================
+   SAVE AREA
+================================ */
+
+.save-area {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 25px;
+    gap: 15px;
+}
+
+.save-message {
+    color: #8296ad;
+    font-size: 14px;
+}
+
+.save-button {
+    padding: 14px 30px;
+    background: #1769aa;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.save-button:hover {
+    background: #2185d0;
+}
+
+/* ================================
+   EMPLOYEE LIST
+================================ */
+
+.employee-list-area {
+    margin-top: 25px;
+    background: #0d1b2d;
+    border: 1px solid #263a52;
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.employee-list-button {
+    display: inline-block;
+    text-decoration: none;
+    background: #1769aa;
+    color: white;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.employee-list-button:hover {
+    background: #2185d0;
+}
+
+.employee-list-info {
+    color: #8296ad;
+    font-size: 14px;
+}
+
+/* ================================
+   MOBILE
+================================ */
+
+@media(max-width: 900px) {
+
+    body {
+        padding: 15px;
+    }
+
+    .employee-navigation {
+        grid-template-columns: 1fr;
+    }
+
+    .nav-employee.right {
+        text-align: left;
+    }
+
+    .details {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .summary {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .save-area {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .employee-list-area {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+    }
+}
+
+@media(max-width: 550px) {
+
+    .summary {
+        grid-template-columns: 1fr;
+    }
+
+    .details {
+        grid-template-columns: 1fr;
+    }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- ================================
+     TOP BAR
+================================ -->
+
+<div class="top-bar">
+
+<a href="/" class="home-button">
+HOME
+</a>
+
+<div class="employee-count">
+{{ employee["site"] }} Attendance
+</div>
+
+</div>
+
+
+<!-- ================================
+     EMPLOYEE NAVIGATION
+================================ -->
+
+<div class="employee-navigation">
+
+{% if previous_employee %}
+
+<a
+href="/attendance/{{ previous_employee['id'] }}"
+class="nav-employee">
+
+<div class="nav-label">
+← PREVIOUS EMPLOYEE
+</div>
+
+<div class="nav-name">
+{{ previous_employee["name"] }}
+</div>
+
+</a>
+
+{% else %}
+
+<div class="nav-employee">
+
+<div class="nav-label">
+← PREVIOUS EMPLOYEE
+</div>
+
+<div class="nav-name">
+FIRST EMPLOYEE
+</div>
+
+</div>
+
+{% endif %}
+
+
+<div class="current-employee">
+
+<div class="current-label">
+CURRENT EMPLOYEE
+</div>
+
+<div class="current-name">
+{{ employee["name"] }}
+</div>
+
+</div>
+
+
+{% if next_employee %}
+
+<a
+href="/attendance/{{ next_employee['id'] }}"
+class="nav-employee right">
+
+<div class="nav-label">
+NEXT EMPLOYEE →
+</div>
+
+<div class="nav-name">
+{{ next_employee["name"] }}
+</div>
+
+</a>
+
+{% else %}
+
+<div class="nav-employee right">
+
+<div class="nav-label">
+NEXT EMPLOYEE →
+</div>
+
+<div class="nav-name">
+LAST EMPLOYEE
+</div>
+
+</div>
+
+{% endif %}
+
+</div>
+
+
+<!-- ================================
+     EMPLOYEE INFORMATION
+================================ -->
+
+<div class="employee-card">
+
+<div class="employee-name">
+{{ employee["name"] }}
+</div>
+
+<div class="details">
+
+<div class="detail">
+
+<div class="label">
+EMPLOYEE CODE
+</div>
+
+<div class="value">
+{{ employee["employee_code"] }}
+</div>
+
+</div>
+
+
+<div class="detail">
+
+<div class="label">
+DESIGNATION
+</div>
+
+<div class="value">
+{{ employee["designation"] }}
+</div>
+
+</div>
+
+
+<div class="detail">
+
+<div class="label">
+SKILL
+</div>
+
+<div class="value">
+{{ employee["skill"] }}
+</div>
+
+</div>
+
+
+<div class="detail">
+
+<div class="label">
+SITE
+</div>
+
+<div class="value">
+{{ employee["site"] }}
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- ================================
+     MONTH
+================================ -->
+
+<div class="month-title">
+
+{{ month_name }} {{ year }}
+
+</div>
+
+
+{% if request.args.get("saved") %}
+
+<div class="saved">
+
+Attendance Saved Successfully
+
+</div>
+
+{% endif %}
+
+
+<!-- ================================
+     ATTENDANCE CARD
+================================ -->
+
+<div class="card">
+
+
+<!-- UNDO / REDO -->
+
+<div class="controls">
+
+<button
+type="button"
+class="control-button"
+id="undoButton"
+onclick="undoAction()">
+
+↶ UNDO
+
+</button>
+
+
+<button
+type="button"
+class="control-button"
+id="redoButton"
+onclick="redoAction()">
+
+↷ REDO
+
+</button>
+
+</div>
+
+
+<form
+method="POST"
+action="/save-attendance"
+id="attendanceForm"
+>
+
+<input
+type="hidden"
+name="employee_id"
+value="{{ employee['id'] }}"
+>
+
+<input
+type="hidden"
+name="month"
+value="{{ month }}"
+>
+
+<input
+type="hidden"
+name="year"
+value="{{ year }}"
+>
+
+
+<!-- ================================
+     ATTENDANCE TABLE
+================================ -->
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>DATE</th>
+
+<th>DAY</th>
+
+<th>STATUS</th>
+
+<th>OT HOURS</th>
+
+</tr>
+
+</thead>
+
+
+<tbody>
+
+{% for day in calendar_days %}
+
+<tr
+class="attendance-row"
+data-date="{{ year }}-{{ '%02d'|format(month) }}-{{ '%02d'|format(day.date) }}"
+>
+
+<td>
+
+{{ "%02d"|format(day.date) }}
+
+</td>
+
+
+<td>
+
+{{ day.day }}
+
+</td>
+
+
+<td>
+
+<select
+name="status_{{ day.date }}"
+class="status"
+>
+
+<option value="">
+-- Select --
+</option>
+
+
+<option
+value="P"
+{% if day.status == "P" %}
+selected
+{% endif %}
+>
+
+P
+
+</option>
+
+
+<option
+value="A"
+{% if day.status == "A" %}
+selected
+{% endif %}
+>
+
+A
+
+</option>
+
+
+<option
+value="W/O"
+{% if day.status == "W/O" %}
+selected
+{% endif %}
+>
+
+W/O
+
+</option>
+
+
+<option
+value="NH"
+{% if day.status == "NH" %}
+selected
+{% endif %}
+>
+
+NH
+
+</option>
+
+
+<option
+value="FL"
+{% if day.status == "FL" %}
+selected
+{% endif %}
+>
+
+FL
+
+</option>
+
+</select>
+
+</td>
+
+
+<td>
+
+<input
+class="ot"
+type="number"
+name="ot_{{ day.date }}"
+value="{{ day.ot }}"
+step="0.5"
+min="0"
+placeholder="0"
+>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+
+<!-- ================================
+     SUMMARY
+================================ -->
+
+<div class="summary">
+
+
+<div class="summary-box">
+
+<div class="summary-label">
+PRESENT
+</div>
+
+<div
+class="summary-value"
+id="totalP">
+
+0
+
+</div>
+
+</div>
+
+
+<div class="summary-box">
+
+<div class="summary-label">
+ABSENT
+</div>
+
+<div
+class="summary-value"
+id="totalA">
+
+0
+
+</div>
+
+</div>
+
+
+<div class="summary-box">
+
+<div class="summary-label">
+W/O
+</div>
+
+<div
+class="summary-value"
+id="totalWO">
+
+0
+
+</div>
+
+</div>
+
+
+<div class="summary-box">
+
+<div class="summary-label">
+NH
+</div>
+
+<div
+class="summary-value"
+id="totalNH">
+
+0
+
+</div>
+
+</div>
+
+
+<div class="summary-box">
+
+<div class="summary-label">
+FL
+</div>
+
+<div
+class="summary-value"
+id="totalFL">
+
+0
+
+</div>
+
+</div>
+
+
+<div class="summary-box">
+
+<div class="summary-label">
+TOTAL OT
+</div>
+
+<div
+class="summary-value"
+id="totalOT">
+
+0
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- ================================
+     SAVE
+================================ -->
+
+<div class="save-area">
+
+<div class="save-message">
+
+Future dates automatically locked hain.
+
+</div>
+
+
+<button
+type="submit"
+class="save-button">
+
+SAVE ATTENDANCE
+
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+
+<!-- ================================
+     EMPLOYEE LIST
+================================ -->
+
+<div class="employee-list-area">
+
+<a
+href="/employees/{{ employee['site'] }}"
+class="employee-list-button">
+
+EMPLOYEE LIST
+
+</a>
+
+
+<div class="employee-list-info">
+
+{{ employee["site"] }} — Employee List
+
+</div>
+
+</div>
+
+
+</div>
+
+
+<script>
+
+/* =========================================
+   SUMMARY
+========================================= */
+
+function calculateSummary() {
+
+    let P = 0;
+    let A = 0;
+    let WO = 0;
+    let NH = 0;
+    let FL = 0;
+    let OT = 0;
+
+
+    document
+    .querySelectorAll(".status")
+    .forEach(function(select) {
+
+        if (select.value === "P") {
+            P++;
+        }
+
+        if (select.value === "A") {
+            A++;
+        }
+
+        if (select.value === "W/O") {
+            WO++;
+        }
+
+        if (select.value === "NH") {
+            NH++;
+        }
+
+        if (select.value === "FL") {
+            FL++;
+        }
+
+    });
+
+
+    document
+    .querySelectorAll(".ot")
+    .forEach(function(input) {
+
+        let value = parseFloat(input.value);
+
+        if (!isNaN(value)) {
+            OT += value;
+        }
+
+    });
+
+
+    document.getElementById("totalP").innerText = P;
+
+    document.getElementById("totalA").innerText = A;
+
+    document.getElementById("totalWO").innerText = WO;
+
+    document.getElementById("totalNH").innerText = NH;
+
+    document.getElementById("totalFL").innerText = FL;
+
+    document.getElementById("totalOT").innerText =
+        OT.toFixed(1);
+
+}
+
+
+/* =========================================
+   UNDO / REDO
+========================================= */
+
+let undoStack = [];
+
+let redoStack = [];
+
+let isRestoring = false;
+
+
+function getFormState() {
+
+    const controls =
+        document.querySelectorAll(
+            "#attendanceForm select, #attendanceForm input.ot"
+        );
+
+    let state = [];
+
+    controls.forEach(function(control) {
+
+        state.push(control.value);
+
+    });
+
+    return state;
+
+}
+
+
+function applyFormState(state) {
+
+    const controls =
+        document.querySelectorAll(
+            "#attendanceForm select, #attendanceForm input.ot"
+        );
+
+    controls.forEach(function(control, index) {
+
+        if (state[index] !== undefined) {
+
+            control.value = state[index];
+
+        }
+
+    });
+
+    calculateSummary();
+
+}
+
+
+function saveHistory() {
+
+    if (isRestoring) {
+        return;
+    }
+
+    undoStack.push(getFormState());
+
+    if (undoStack.length > 50) {
+        undoStack.shift();
+    }
+
+    redoStack = [];
+
+    updateUndoRedo();
+
+}
+
+
+function undoAction() {
+
+    if (undoStack.length === 0) {
+        return;
+    }
+
+    redoStack.push(getFormState());
+
+    let previous = undoStack.pop();
+
+    isRestoring = true;
+
+    applyFormState(previous);
+
+    isRestoring = false;
+
+    updateUndoRedo();
+
+}
+
+
+function redoAction() {
+
+    if (redoStack.length === 0) {
+        return;
+    }
+
+    undoStack.push(getFormState());
+
+    let next = redoStack.pop();
+
+    isRestoring = true;
+
+    applyFormState(next);
+
+    isRestoring = false;
+
+    updateUndoRedo();
+
+}
+
+
+function updateUndoRedo() {
+
+    document.getElementById("undoButton").disabled =
+        undoStack.length === 0;
+
+    document.getElementById("redoButton").disabled =
+        redoStack.length === 0;
+
+}
+
+
+/* =========================================
+   FUTURE DATE LOCK
+========================================= */
+
+function lockFutureDates() {
+
+    const today = new Date();
+
+    today.setHours(0, 0, 0, 0);
+
+
+    document
+    .querySelectorAll(".attendance-row")
+    .forEach(function(row) {
+
+        const dateString = row.dataset.date;
+
+        const parts = dateString.split("-");
+
+
+        const rowDate = new Date(
+            parseInt(parts[0]),
+            parseInt(parts[1]) - 1,
+            parseInt(parts[2])
+        );
+
+
+        rowDate.setHours(0, 0, 0, 0);
+
+
+        if (rowDate > today) {
+
+            row.classList.add("future-date");
+
+
+            const controls =
+                row.querySelectorAll("select, input");
+
+
+            controls.forEach(function(control) {
+
+                control.disabled = true;
+
+            });
+
+
+            const dateCell = row.children[0];
+
+            dateCell.innerHTML +=
+                ' <span class="locked-label">🔒</span>';
+
+        }
+
+    });
+
+}
+
+
+/* =========================================
+   INPUT EVENTS
+========================================= */
+
+document
+.querySelectorAll(
+    "#attendanceForm select, #attendanceForm input.ot"
+)
+.forEach(function(control) {
+
+
+    control.addEventListener(
+        "change",
+        function() {
+
+            saveHistory();
+
+            calculateSummary();
+
+        }
+    );
+
+
+    control.addEventListener(
+        "input",
+        function() {
+
+            saveHistory();
+
+            calculateSummary();
+
+        }
+    );
+
+});
+
+
+/* =========================================
+   INITIAL LOAD
+========================================= */
+
+calculateSummary();
+
+updateUndoRedo();
+
+lockFutureDates();
+
+</script>
+
+</body>
+
+</html>

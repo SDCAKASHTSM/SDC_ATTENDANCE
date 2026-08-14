@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Edit Employee</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+
+    margin: 0;
+
+    min-height: 100vh;
+
+    background: #07111f;
+
+    color: white;
+
+    font-family: Arial, sans-serif;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    padding: 30px;
+}
+
+.container {
+
+    width: 100%;
+
+    max-width: 700px;
+}
+
+.card {
+
+    background: #0d1b2d;
+
+    border: 1px solid #263a52;
+
+    border-radius: 18px;
+
+    padding: 35px;
+}
+
+h1 {
+
+    margin: 0 0 8px 0;
+
+    font-size: 30px;
+}
+
+.subtitle {
+
+    color: #4da3ff;
+
+    margin-bottom: 30px;
+
+    font-size: 15px;
+}
+
+label {
+
+    display: block;
+
+    color: #9fb0c5;
+
+    margin-bottom: 7px;
+
+    font-size: 14px;
+}
+
+input,
+select {
+
+    width: 100%;
+
+    padding: 13px;
+
+    margin-bottom: 20px;
+
+    background: #07111f;
+
+    color: white;
+
+    border: 1px solid #263a52;
+
+    border-radius: 8px;
+
+    outline: none;
+
+    font-size: 15px;
+}
+
+input:focus,
+select:focus {
+
+    border-color: #4da3ff;
+}
+
+.rate-box {
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 15px;
+}
+
+.rate-title {
+
+    color: #9fb0c5;
+
+    margin-bottom: 7px;
+
+    font-size: 14px;
+}
+
+.buttons {
+
+    display: flex;
+
+    gap: 12px;
+
+    margin-top: 5px;
+}
+
+button,
+.back {
+
+    padding: 13px 22px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    text-decoration: none;
+
+    font-weight: bold;
+
+    font-size: 14px;
+}
+
+.save {
+
+    background: #1769aa;
+
+    color: white;
+
+    border: none;
+}
+
+.save:hover {
+
+    background: #2185d0;
+}
+
+.back {
+
+    background: #39495c;
+
+    color: white;
+}
+
+.back:hover {
+
+    background: #4b5d72;
+}
+
+.employee-info {
+
+    background: #07111f;
+
+    border: 1px solid #263a52;
+
+    border-radius: 10px;
+
+    padding: 12px 15px;
+
+    margin-bottom: 25px;
+
+    color: #8fa4bb;
+
+    font-size: 13px;
+}
+
+.employee-info strong {
+
+    color: #7dd3a8;
+}
+
+@media(max-width: 600px) {
+
+    .rate-box {
+
+        grid-template-columns: 1fr;
+    }
+
+    .buttons {
+
+        flex-direction: column;
+    }
+
+    .card {
+
+        padding: 25px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+<div class="card">
+
+
+<h1>
+EDIT EMPLOYEE
+</h1>
+
+
+<div class="subtitle">
+Employee Master Data
+</div>
+
+
+<div class="employee-info">
+
+Employee ID:
+<strong>
+{{ employee["id"] }}
+</strong>
+
+&nbsp;&nbsp; | &nbsp;&nbsp;
+
+Current Site:
+<strong>
+{{ employee["site"] }}
+</strong>
+
+</div>
+
+
+<form
+    method="POST"
+    action="/update-employee/{{ employee['id'] }}"
+>
+
+
+<label>
+Employee Name
+</label>
+
+<input
+    type="text"
+    name="name"
+    value="{{ employee['name'] }}"
+    required
+>
+
+
+<label>
+Employee Code
+</label>
+
+<input
+    type="text"
+    name="employee_code"
+    value="{{ employee['employee_code'] }}"
+    required
+>
+
+
+<label>
+Designation
+</label>
+
+<input
+    type="text"
+    name="designation"
+    value="{{ employee['designation'] }}"
+    required
+>
+
+
+<label>
+Skill
+</label>
+
+<input
+    type="text"
+    name="skill"
+    value="{{ employee['skill'] }}"
+>
+
+
+<label>
+Site
+</label>
+
+<select
+    name="site"
+    required
+>
+
+<option
+    value="TSM"
+    {% if employee['site'] == 'TSM' %}
+    selected
+    {% endif %}
+>
+TSM
+</option>
+
+<option
+    value="TSK"
+    {% if employee['site'] == 'TSK' %}
+    selected
+    {% endif %}
+>
+TSK
+</option>
+
+<option
+    value="NINL"
+    {% if employee['site'] == 'NINL' %}
+    selected
+    {% endif %}
+>
+NINL
+</option>
+
+</select>
+
+
+<div class="rate-box">
+
+
+<div>
+
+<div class="rate-title">
+Basic Rate
+</div>
+
+<input
+    type="number"
+    name="basic"
+    value="{{ employee['basic'] or 0 }}"
+    min="0"
+    step="0.01"
+    required
+>
+
+</div>
+
+
+<div>
+
+<div class="rate-title">
+Gross Rate
+</div>
+
+<input
+    type="number"
+    name="gross"
+    value="{{ employee['gross'] or 0 }}"
+    min="0"
+    step="0.01"
+    required
+>
+
+</div>
+
+
+</div>
+
+
+<div class="buttons">
+
+
+<button
+    type="submit"
+    class="save"
+>
+SAVE CHANGES
+</button>
+
+
+<a
+    href="/employees/{{ employee['site'] }}"
+    class="back"
+>
+CANCEL
+</a>
+
+
+</div>
+
+
+</form>
+
+
+</div>
+
+</div>
+
+
+</body>
+
+</html>

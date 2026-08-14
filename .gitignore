@@ -1,0 +1,6 @@
+attendance.db
+attendance_backup.db
+__pycache__/
+venv/
+.venv/
+*.pyc

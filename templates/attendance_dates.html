@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Select Date - {{ site }} Attendance</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+
+    margin: 0;
+
+    min-height: 100vh;
+
+    background: #07111f;
+
+    color: white;
+
+    font-family: Arial, sans-serif;
+
+    padding: 30px;
+}
+
+.container {
+
+    width: 100%;
+
+    max-width: 1000px;
+
+    margin: auto;
+}
+
+
+/* ================================
+   TOP
+================================ */
+
+.top {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 30px;
+}
+
+.home,
+.back {
+
+    text-decoration: none;
+
+    color: white;
+
+    background: #1769aa;
+
+    padding: 11px 20px;
+
+    border-radius: 8px;
+
+    font-weight: bold;
+}
+
+.home:hover,
+.back:hover {
+
+    background: #2185d0;
+}
+
+
+/* ================================
+   HEADER
+================================ */
+
+.title {
+
+    text-align: center;
+
+    font-size: 32px;
+
+    font-weight: bold;
+
+    margin-bottom: 8px;
+}
+
+.subtitle {
+
+    text-align: center;
+
+    color: #8296ad;
+
+    margin-bottom: 30px;
+}
+
+.month-title {
+
+    text-align: center;
+
+    font-size: 24px;
+
+    color: #4da3ff;
+
+    font-weight: bold;
+
+    margin-bottom: 25px;
+}
+
+
+/* ================================
+   DATE GRID
+================================ */
+
+.date-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(7, 1fr);
+
+    gap: 14px;
+}
+
+.date-card {
+
+    text-decoration: none;
+
+    background: #0d1b2d;
+
+    border: 1px solid #263a52;
+
+    color: white;
+
+    border-radius: 12px;
+
+    padding: 18px 10px;
+
+    text-align: center;
+
+    transition: 0.2s;
+
+    display: block;
+}
+
+.date-card:hover {
+
+    transform: translateY(-3px);
+
+    background: #102943;
+
+    border-color: #4da3ff;
+}
+
+.date-number {
+
+    font-size: 24px;
+
+    font-weight: bold;
+
+    color: #4da3ff;
+
+    margin-bottom: 7px;
+}
+
+.date-day {
+
+    font-size: 13px;
+
+    color: #8296ad;
+
+    text-transform: uppercase;
+}
+
+
+/* ================================
+   FUTURE DATE
+================================ */
+
+.date-card.future {
+
+    opacity: 0.35;
+
+    cursor: not-allowed;
+
+    pointer-events: none;
+
+    background: #050b13;
+
+    border-color: #1b2633;
+}
+
+.date-card.future .date-number {
+
+    color: #64748b;
+}
+
+.locked {
+
+    display: block;
+
+    margin-top: 7px;
+
+    font-size: 11px;
+
+    color: #64748b;
+}
+
+
+/* ================================
+   INFO
+================================ */
+
+.info {
+
+    margin-top: 25px;
+
+    background: #0d1b2d;
+
+    border: 1px solid #263a52;
+
+    border-radius: 12px;
+
+    padding: 15px;
+
+    text-align: center;
+
+    color: #8296ad;
+
+    font-size: 14px;
+}
+
+
+/* ================================
+   MOBILE
+================================ */
+
+@media(max-width: 700px) {
+
+    body {
+
+        padding: 20px;
+    }
+
+    .date-grid {
+
+        grid-template-columns:
+            repeat(4, 1fr);
+    }
+
+}
+
+@media(max-width: 450px) {
+
+    .date-grid {
+
+        grid-template-columns:
+            repeat(3, 1fr);
+    }
+
+    .title {
+
+        font-size: 26px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+<!-- ================================
+     TOP
+================================ -->
+
+<div class="top">
+
+<a
+href="/select-month/{{ site }}"
+class="back">
+
+← CHANGE MONTH
+
+</a>
+
+
+<a
+href="/"
+class="home">
+
+HOME
+
+</a>
+
+</div>
+
+
+<!-- ================================
+     HEADER
+================================ -->
+
+<div class="title">
+
+SELECT ATTENDANCE DATE
+
+</div>
+
+
+<div class="subtitle">
+
+SITE: {{ site }}
+
+</div>
+
+
+<div class="month-title">
+
+{{ month_name }} {{ year }}
+
+</div>
+
+
+<!-- ================================
+     DATE GRID
+================================ -->
+
+<div class="date-grid">
+
+
+{% for item in days %}
+
+
+{% if item.future %}
+
+<div class="date-card future">
+
+<div class="date-number">
+
+{{ "%02d"|format(item.date) }}
+
+</div>
+
+<div class="date-day">
+
+{{ item.day }}
+
+</div>
+
+<span class="locked">
+
+🔒 FUTURE
+
+</span>
+
+</div>
+
+
+{% else %}
+
+<a
+href="/attendance-select/{{ site }}/{{ month }}/{{ year }}/{{ item.date }}"
+class="date-card"
+>
+
+<div class="date-number">
+
+{{ "%02d"|format(item.date) }}
+
+</div>
+
+<div class="date-day">
+
+{{ item.day }}
+
+</div>
+
+</a>
+
+{% endif %}
+
+
+{% endfor %}
+
+
+</div>
+
+
+<div class="info">
+
+Select a date to continue to employee selection.
+
+</div>
+
+
+</div>
+
+
+</body>
+
+</html>

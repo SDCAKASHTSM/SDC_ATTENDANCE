@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Select Month - SDC Attendance</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+
+    margin: 0;
+
+    min-height: 100vh;
+
+    background: #07111f;
+
+    color: white;
+
+    font-family: Arial, sans-serif;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    padding: 30px;
+}
+
+.container {
+
+    width: 100%;
+
+    max-width: 900px;
+}
+
+.top {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 25px;
+}
+
+.home {
+
+    text-decoration: none;
+
+    background: #1769aa;
+
+    color: white;
+
+    padding: 11px 20px;
+
+    border-radius: 8px;
+
+    font-weight: bold;
+}
+
+.home:hover {
+
+    background: #2185d0;
+}
+
+.site-title {
+
+    font-size: 30px;
+
+    font-weight: bold;
+
+    text-align: center;
+}
+
+.subtitle {
+
+    text-align: center;
+
+    color: #8296ad;
+
+    margin-top: 8px;
+
+    margin-bottom: 30px;
+}
+
+.month-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 18px;
+}
+
+.month-card {
+
+    text-decoration: none;
+
+    background: #0d1b2d;
+
+    border: 1px solid #263a52;
+
+    color: white;
+
+    border-radius: 14px;
+
+    padding: 25px;
+
+    text-align: center;
+
+    transition: 0.2s;
+}
+
+.month-card:hover {
+
+    transform: translateY(-3px);
+
+    border-color: #4da3ff;
+
+    background: #102943;
+}
+
+.month-number {
+
+    color: #4da3ff;
+
+    font-size: 13px;
+
+    margin-bottom: 8px;
+}
+
+.month-name {
+
+    font-size: 21px;
+
+    font-weight: bold;
+}
+
+.fy {
+
+    text-align: center;
+
+    margin-top: 25px;
+
+    color: #8296ad;
+
+    font-size: 14px;
+}
+
+@media(max-width: 700px) {
+
+    .month-grid {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+    }
+
+}
+
+@media(max-width: 450px) {
+
+    .month-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+<div class="top">
+
+<a
+href="/"
+class="home">
+
+🏠 HOME
+
+</a>
+
+
+<div>
+
+<strong>
+
+SITE: {{ site }}
+
+</strong>
+
+</div>
+
+</div>
+
+
+
+<div class="site-title">
+
+SELECT ATTENDANCE MONTH
+
+</div>
+
+
+<div class="subtitle">
+
+{{ site }} employees ke liye month select karein
+
+</div>
+
+
+
+<div class="month-grid">
+
+
+{% for item in months %}
+
+
+<a
+href="/attendance-dates/{{ site }}/{{ item.month }}/{{ item.year }}"
+class="month-card"
+>
+
+
+<div class="month-number">
+
+MONTH {{ loop.index }}
+
+</div>
+
+
+<div class="month-name">
+
+{{ item.name }}
+
+</div>
+
+
+</a>
+
+
+{% endfor %}
+
+
+</div>
+
+
+
+<div class="fy">
+
+Financial Year:
+
+<strong>
+
+01 April 2026 — 31 March 2027
+
+</strong>
+
+</div>
+
+
+</div>
+
+
+</body>
+
+</html>

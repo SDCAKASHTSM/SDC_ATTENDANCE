@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>{{ site }} - Show Attendance</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+
+    min-height: 100vh;
+
+    background: #07111f;
+
+    color: white;
+
+    font-family: Arial, sans-serif;
+
+    padding: 40px;
+
+}
+
+.container {
+
+    max-width: 1100px;
+
+    margin: auto;
+
+    text-align: center;
+
+}
+
+h1 {
+
+    font-size: 36px;
+
+    margin-bottom: 10px;
+
+}
+
+.site {
+
+    color: #4da3ff;
+
+    font-size: 20px;
+
+    font-weight: bold;
+
+    margin-bottom: 8px;
+
+}
+
+.subtitle {
+
+    color: #9fb0c5;
+
+    margin-bottom: 35px;
+
+}
+
+.months {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 18px;
+
+}
+
+.month-button {
+
+    background: #0d1b2d;
+
+    border: 1px solid #263a52;
+
+    border-radius: 12px;
+
+    padding: 25px 15px;
+
+    color: white;
+
+    text-decoration: none;
+
+    font-weight: bold;
+
+    transition: 0.25s;
+
+}
+
+.month-button:hover {
+
+    background: #12263d;
+
+    border-color: #4da3ff;
+
+    transform: translateY(-4px);
+
+}
+
+.back {
+
+    display: inline-block;
+
+    margin-top: 35px;
+
+    padding: 11px 22px;
+
+    background: #39495c;
+
+    color: white;
+
+    text-decoration: none;
+
+    border-radius: 8px;
+
+}
+
+@media(max-width: 700px) {
+
+    body {
+
+        padding: 20px;
+
+    }
+
+    .months {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+<h1>
+
+📊 SHOW ATTENDANCE
+
+</h1>
+
+
+<div class="site">
+
+{{ site }}
+
+</div>
+
+
+<div class="subtitle">
+
+Select Month
+
+</div>
+
+
+<div class="months">
+
+
+{% for item in months %}
+
+
+<a
+    href="/show-attendance/{{ site }}/{{ item['month'] }}/{{ item['year'] }}"
+    class="month-button"
+>
+
+{{ item['name'] }}
+
+</a>
+
+
+{% endfor %}
+
+
+</div>
+
+
+<a
+    href="/show-attendance"
+    class="back"
+>
+
+← CHANGE SITE
+
+</a>
+
+
+</div>
+
+
+</body>
+
+</html>
